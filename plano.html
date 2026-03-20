@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano - ML Trend Hunter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-[#0f0f0f] text-white font-sans">
+
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
+        <div class="flex items-baseline gap-1">
+            <span class="font-bold text-2xl text-white">ML</span>
+            <span class="font-light text-2xl text-[#d4ff3f]">Trend Hunter</span>
+        </div>
+        <a href="index.html" class="text-gray-400 hover:text-white transition">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Voltar
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-20">
+        <!-- Header -->
+        <div class="text-center mb-16">
+            <h1 class="text-5xl font-bold mb-4">Nosso <span class="text-[#d4ff3f]">Plano Único</span></h1>
+            <p class="text-gray-400 text-lg">Tudo que você precisa para encontrar os melhores produtos do Mercado Livre
+            </p>
+        </div>
+
+        <!-- Pricing Card -->
+        <div class="bg-[#1a1a1a] p-8 rounded-3xl border-2 border-[#d4ff3f] mb-12">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-[#d4ff3f] text-black px-4 py-2 rounded-full text-sm font-bold mb-4">
+                    PLANO COMPLETO
+                </div>
+                <div class="text-6xl font-bold text-[#d4ff3f] mb-2">
+                    R$ 47<span class="text-2xl text-gray-400">/mês</span>
+                </div>
+                <p class="text-gray-400">Acesso completo sem limites</p>
+            </div>
+
+            <!-- Features -->
+            <div class="space-y-6 mb-8">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-[#d4ff3f]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-envelope text-[#d4ff3f] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Lista Diária por Email</h3>
+                        <p class="text-gray-400">Receba todos os dias, direto no seu email, os produtos com maior volume
+                            de vendas e crescimento no Mercado Livre.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-[#d4ff3f]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-chart-line text-[#d4ff3f] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Dashboard Completo</h3>
+                        <p class="text-gray-400">Acesso total à nossa plataforma com filtros avançados, gráficos de
+                            tendências e dados em tempo real.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-[#d4ff3f]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-filter text-[#d4ff3f] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Filtros Inteligentes</h3>
+                        <p class="text-gray-400">Filtre produtos por categoria, faixa de preço, crescimento, margem de
+                            lucro e muito mais.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-[#d4ff3f]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-bolt text-[#d4ff3f] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Atualizações em Tempo Real</h3>
+                        <p class="text-gray-400">Dados atualizados constantemente para garantir que você sempre tenha as
+                            informações mais recentes.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 bg-[#d4ff3f]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-mobile-alt text-[#d4ff3f] text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">Acesso Mobile</h3>
+                        <p class="text-gray-400">Acompanhe as oportunidades de qualquer lugar pelo seu celular ou
+                            tablet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Form -->
+            <div class="bg-[#0f0f0f] p-6 rounded-xl">
+                <h3 class="text-xl font-bold mb-4 text-center">Comece Agora</h3>
+                <form id="planoForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Seu Melhor Email</label>
+                        <input type="email" id="planoEmail" required placeholder="seu@email.com"
+                            class="w-full bg-transparent border border-white/20 rounded-lg px-4 py-3 text-white outline-none focus:border-[#d4ff3f] transition">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-[#d4ff3f] text-black py-3 rounded-xl font-bold hover:bg-white transition">
+                        <i class="fa-solid fa-rocket mr-2"></i>Quero Receber a Lista Diária
+                    </button>
+                </form>
+                <div id="planoFeedback" class="hidden text-sm mt-3 text-[#d4ff3f] text-center">
+                    Cadastro realizado! Você receberá um email com os próximos passos.
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <!-- <div class="bg-[#1a1a1a] p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fa-solid fa-guarantee-sign text-[#d4ff3f] text-3xl mb-4"></i>
+                <h3 class="font-bold mb-2">Garantia de 7 Dias</h3>
+                <p class="text-gray-400 text-sm">Teste por 7 dias. Se não gostar, cancele sem custos.</p>
+            </div> -->
+
+            <div class="bg-[#1a1a1a] p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fa-solid fa-headset text-[#d4ff3f] text-3xl mb-4"></i>
+                <h3 class="font-bold mb-2">Suporte Prioritário</h3>
+                <p class="text-gray-400 text-sm">Dúvidas? Estamos aqui para ajudar em qualquer momento.</p>
+            </div>
+
+            <div class="bg-[#1a1a1a] p-6 rounded-2xl border border-white/5 text-center">
+                <i class="fa-solid fa-lock text-[#d4ff3f] text-3xl mb-4"></i>
+                <h3 class="font-bold mb-2">Pagamento Seguro</h3>
+                <p class="text-gray-400 text-sm">Seus dados protegidos com criptografia avançada.</p>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="bg-[#1a1a1a] p-8 rounded-3xl border border-white/5">
+            <h2 class="text-2xl font-bold mb-6 text-center">Dúvidas Frequentes</h2>
+
+            <div class="space-y-4">
+                <div class="border-b border-white/10 pb-4">
+                    <h3 class="font-bold mb-2">Como funciona a lista diária?</h3>
+                    <p class="text-gray-400 text-sm">Todos os dias você recebe um email com os produtos que estão em
+                        alta no Mercado Livre, incluindo preço, volume de vendas e margem de lucro estimada.</p>
+                </div>
+
+                <!-- <div class="border-b border-white/10 pb-4">
+                    <h3 class="font-bold mb-2">Posso cancelar a qualquer momento?</h3>
+                    <p class="text-gray-400 text-sm">Sim! Você pode cancelar sua assinatura quando quiser, sem multas ou
+                        custos adicionais.</p>
+                </div> -->
+
+                <div class="border-b border-white/10 pb-4">
+                    <h3 class="font-bold mb-2">Os dados são em tempo real?</h3>
+                    <p class="text-gray-400 text-sm">Sim! Nossos sistemas monitoram o Mercado Livre 24/7 para garantir
+                        que você sempre tenha as informações mais atualizadas.</p>
+                </div>
+
+                <div>
+                    <h3 class="font-bold mb-2">Como acesso o dashboard?</h3>
+                    <p class="text-gray-400 text-sm">Após o cadastro, você recebe acesso imediato à nossa plataforma com
+                        todos os filtros e dados detalhados.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#121212] border-t border-white/5 mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-12 text-center">
+            <div class="flex items-baseline gap-1 mb-2 justify-center">
+                <span class="font-bold text-xl text-white">ML</span>
+                <span class="font-light text-xl text-[#d4ff3f]">Trend Hunter</span>
+            </div>
+            <p class="text-sm text-gray-500">
+                &copy; 2026 ML Trend Hunter. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('planoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('planoEmail').value;
+            const btn = e.target.querySelector('button[type="submit"]');
+            const feedback = document.getElementById('planoFeedback');
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processando...';
+            btn.disabled = true;
+
+            try {
+                // Enviar para o N8N
+                const webhookURL = 'https://program-notification-chrome-george.trycloudflare.com/webhook/cadastro-plano';
+
+                await fetch(webhookURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        plano: 'acesso-completo',
+                        preco: 47,
+                        data_cadastro: new Date().toISOString(),
+                        origem: 'pagina-plano'
+                    })
+                });
+
+                // Sucesso
+                feedback.classList.remove('hidden');
+                btn.innerHTML = '<i class="fa-solid fa-check mr-2"></i>Cadastro Realizado!';
+                btn.classList.add('bg-green-600');
+
+                // Limpar formulário
+                document.getElementById('planoEmail').value = '';
+
+                // Salvar no localStorage
+                localStorage.setItem('mlt_user', JSON.stringify({
+                    email: email,
+                    plano: 'acesso-completo',
+                    data_cadastro: new Date().toISOString(),
+                    status: 'pendente_pagamento'
+                }));
+
+            } catch (error) {
+                console.error('Erro:', error);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                alert('Erro ao processar cadastro. Tente novamente.');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
