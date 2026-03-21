@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plano - ML Trend Hunter</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d4ff3f'/%3E%3Cstop offset='100%25' style='stop-color:%23b8e600'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23grad)'/%3E%3Cg transform='translate(6,6)'%3E%3Crect x='2' y='2' width='16' height='16' rx='3' fill='%23000' opacity='0.9'/%3E%3Crect x='4' y='6' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='9' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='12' width='9' height='1.5' fill='%23d4ff3f'/%3E%3Cpath d='M13 13l2.5-2.5 2.5 2.5-2.5 2.5-2.5-2.5z' fill='%23d4ff3f'/%3E%3C/g%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -13,14 +15,47 @@
 
     <!-- Navbar -->
     <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
-        <div class="flex items-baseline gap-1">
-            <span class="font-bold text-2xl text-white">ML</span>
-            <span class="font-light text-2xl text-[#d4ff3f]">Trend Hunter</span>
+        <div class="flex items-center gap-3">
+            <!-- Logo/Ícone -->
+            <div class="w-10 h-10 bg-[#d4ff3f] rounded-lg flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3h18v18H3V3zm16 16V5H5v14h14z" fill="#000" />
+                    <path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" fill="#000" />
+                    <path d="M15 13l3-3 3 3-3 3-3-3z" fill="#000" />
+                </svg>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-white">ML</span>
+                <span class="font-light text-2xl text-[#d4ff3f]">Trend Hunter</span>
+            </div>
         </div>
-        <a href="index.html" class="text-gray-400 hover:text-white transition">
-            <i class="fa-solid fa-arrow-left mr-2"></i>Voltar
-        </a>
+
+        <!-- Menu Mobile Simples -->
+        <div class="flex items-center gap-4">
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-white">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="index.html" class="text-gray-400 hover:text-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    Voltar
+                </a>
+            </div>
+        </div>
     </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden bg-[#1a1a1a] border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <a href="index.html" class="block text-white hover:text-[#d4ff3f] transition flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i>
+                Voltar para Home
+            </a>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="max-w-4xl mx-auto px-6 py-20">
@@ -201,7 +236,7 @@
 
             try {
                 // Enviar para o N8N
-                const webhookURL = 'https://program-notification-chrome-george.trycloudflare.com/webhook/cadastro-plano';
+                const webhookURL = 'unenduring-maleah-regenerable.ngrok-free.dev/webhook/cadastro-plano';
 
                 await fetch(webhookURL, {
                     method: 'POST',
@@ -237,6 +272,24 @@
                 btn.disabled = false;
                 alert('Erro ao processar cadastro. Tente novamente.');
             }
+        });
+
+        <!-- Menu Mobile Script Simplificado -->
+
+        // Menu mobile simples
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Fechar ao clicar em links
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
         });
     </script>
 

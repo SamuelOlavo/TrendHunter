@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ML Trend Hunter - Inteligência de Mercado</title>
+    <title>ML Trend Hunter</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d4ff3f'/%3E%3Cstop offset='100%25' style='stop-color:%23b8e600'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23grad)'/%3E%3Cg transform='translate(6,6)'%3E%3Crect x='2' y='2' width='16' height='16' rx='3' fill='%23000' opacity='0.9'/%3E%3Crect x='4' y='6' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='9' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='12' width='9' height='1.5' fill='%23d4ff3f'/%3E%3Cpath d='M13 13l2.5-2.5 2.5 2.5-2.5 2.5-2.5-2.5z' fill='%23d4ff3f'/%3E%3C/g%3E%3C/svg%3E">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
@@ -12,18 +14,53 @@
 <body class="bg-[#0f0f0f] text-white font-sans">
 
     <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
-        <div class="flex items-baseline gap-1">
-            <span class="font-bold text-2xl text-white">ML</span>
-            <span class="font-light text-2xl text-[#d4ff3f]">Trend Hunter</span>
+        <div class="flex items-center gap-3">
+            <!-- Logo/Ícone -->
+            <div class="w-10 h-10 bg-[#d4ff3f] rounded-lg flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3h18v18H3V3zm16 16V5H5v14h14z" fill="#000" />
+                    <path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" fill="#000" />
+                    <path d="M15 13l3-3 3 3-3 3-3-3z" fill="#000" />
+                </svg>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-white">ML</span>
+                <span class="font-light text-2xl text-[#d4ff3f]">Trend Hunter</span>
+            </div>
         </div>
-        <div class="hidden md:flex space-x-8 text-gray-400">
-            <a href="#Funcionalidades" class="hover:text-white">Funcionalidades</a>
-            <a href="#Benefícios" class="hover:text-white">Benefícios</a>
-            <a href="plano.html" class="hover:text-white">Planos</a>
+
+        <!-- Menu Mobile Simples -->
+        <div class="flex items-center gap-4">
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden text-white">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 text-gray-400">
+                <a href="#Funcionalidades" class="hover:text-white">Funcionalidades</a>
+                <a href="#Benefícios" class="hover:text-white">Benefícios</a>
+                <a href="plano.html" class="hover:text-white">Planos</a>
+            </div>
+
+            <!-- Desktop CTA Button -->
+            <button
+                class="hidden md:block bg-[#d4ff3f] text-black px-6 py-2 rounded-full font-bold hover:bg-white transition">Começar
+                Agora</button>
         </div>
-        <button class="bg-[#d4ff3f] text-black px-6 py-2 rounded-full font-bold hover:bg-white transition">Começar
-            Agora</button>
     </nav>
+
+    <!-- Mobile Menu Dropdown -->
+    <div id="mobileMenu" class="hidden md:hidden bg-[#1a1a1a] border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4 space-y-3">
+            <a href="#Funcionalidades" class="block text-white hover:text-[#d4ff3f] transition">Funcionalidades</a>
+            <a href="#Benefícios" class="block text-white hover:text-[#d4ff3f] transition">Benefícios</a>
+            <a href="plano.html" class="block text-white hover:text-[#d4ff3f] transition">Planos</a>
+            <button class="bg-[#d4ff3f] text-black px-6 py-2 rounded-full font-bold hover:bg-white transition w-full">
+                Começar Agora
+            </button>
+        </div>
+    </div>
 
     <section class="text-center py-20 px-4">
         <div
@@ -63,7 +100,7 @@
                 try {
 
                     // URL de Produção do n8n via Túnel Cloudflare
-                    const webhookURL = 'https://bugs-option-seed-hazardous.trycloudflare.com/webhook/cadastro-lista';
+                    const webhookURL = 'https://unenduring-maleah-regenerable.ngrok-free.dev/webhook/cadastro-lista';
 
                     await fetch(webhookURL, {
                         method: 'POST',
@@ -78,6 +115,25 @@
                     btn.innerText = 'Começar Grátis →';
                     btn.disabled = false;
                 }
+            });
+        </script>
+
+        <!-- Menu Mobile Script Simplificado -->
+        <script>
+            // Menu mobile simples
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Fechar ao clicar em links
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
             });
         </script>
         <p class="text-xs text-gray-500 mt-4">Teste grátis. Sem cartão de crédito.</p>
