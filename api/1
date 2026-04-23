@@ -1,0 +1,7 @@
+
+> trend-hunter-api@1.0.0 start
+> node server.js 2
+
+🚀 Trend Hunter API rodando na porta 3001
+📊 Dashboard: http://localhost:3001
+🔧 API Docs: http://localhost:3001/api

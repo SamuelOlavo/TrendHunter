@@ -1,0 +1,410 @@
+/* Estilos do Dashboard Trend Hunter */
+
+/* Estilos para containers de gráficos */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* Estilos para botões de filtro dos gráficos */
+.chart-filter-btn {
+    transition: all 0.2s ease;
+}
+
+.chart-filter-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos para scroll horizontal em tabelas */
+.sql-result-table {
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.sql-result-table::-webkit-scrollbar {
+    height: 8px;
+}
+
+.sql-result-table::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.sql-result-table::-webkit-scrollbar-thumb {
+    background: #d4ff3f;
+    border-radius: 4px;
+}
+
+.sql-result-table::-webkit-scrollbar-thumb:hover {
+    background: #b8e600;
+}
+
+/* Estilos para badges de plataforma */
+.platform-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.ml-badge {
+    background: #ffe600;
+    color: #000;
+}
+
+.amazon-badge {
+    background: #ff9900;
+    color: #fff;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+    
+    .grid-cols-1.md\:grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    
+    .grid-cols-1.lg\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animações e transições */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Estilos para tooltips personalizados */
+.tooltip-custom {
+    position: relative;
+}
+
+.tooltip-custom::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 1000;
+}
+
+.tooltip-custom:hover::after {
+    opacity: 1;
+}
+
+/* Estilos para loading states */
+.loading-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #d4ff3f;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para mensagens de erro/sucesso */
+.alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+}
+
+/* Estilos para cards de oportunidades */
+.opportunity-card {
+    transition: all 0.2s ease;
+}
+
+.opportunity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(212, 255, 63, 0.1);
+}
+
+/* Estilos para gráficos personalizados */
+.chart-legend-custom {
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.chart-legend-custom li {
+    margin-bottom: 4px;
+}
+
+.chart-legend-custom li span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 8px;
+    border-radius: 2px;
+}
+
+/* Estilos para o pódio de produtos */
+.podium-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, rgba(212, 255, 63, 0.1) 0%, rgba(26, 26, 26, 0.8) 100%);
+    border: 1px solid rgba(212, 255, 63, 0.2);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.podium-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(212, 255, 63, 0.4);
+    box-shadow: 0 8px 16px rgba(212, 255, 63, 0.1);
+}
+
+.podium-position {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+}
+
+.podium-position.gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.podium-position.silver {
+    background: linear-gradient(135deg, #C0C0C0, #808080);
+    color: #000;
+    box-shadow: 0 4px 12px rgba(192, 192, 192, 0.4);
+}
+
+.podium-position.bronze {
+    background: linear-gradient(135deg, #CD7F32, #8B4513);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(205, 127, 50, 0.4);
+}
+
+.podium-position.other {
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    color: #d4ff3f;
+    border: 2px solid rgba(212, 255, 63, 0.3);
+}
+
+.podium-info {
+    flex: 1;
+}
+
+.podium-name {
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.25rem;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    display: -webkit-box;
+    font-size: 0.875rem;
+    line-height: 1.2;
+}
+
+.podium-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    flex-wrap: wrap;
+}
+
+.podium-frequency {
+    background: rgba(212, 255, 63, 0.2);
+    color: #d4ff3f;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.podium-platform {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.podium-category {
+    color: #6b7280;
+}
+
+/* Animação de entrada para o pódio */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.podium-item {
+    animation: slideInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.podium-item:nth-child(1) { animation-delay: 0.1s; }
+.podium-item:nth-child(2) { animation-delay: 0.2s; }
+.podium-item:nth-child(3) { animation-delay: 0.3s; }
+.podium-item:nth-child(4) { animation-delay: 0.4s; }
+.podium-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Estilos para pódios separados por plataforma */
+.podium-section {
+    transition: all 0.3s ease;
+}
+
+.podium-section:hover {
+    transform: translateY(-2px);
+}
+
+.podium-item-platform {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.podium-item-platform:hover {
+    border-color: rgba(212, 255, 63, 0.6);
+    box-shadow: 0 10px 20px rgba(212, 255, 63, 0.15);
+    transform: translateY(-4px);
+}
+
+.podium-item-platform.ml:hover {
+    border-color: rgba(255, 230, 0, 0.6);
+    box-shadow: 0 10px 20px rgba(255, 230, 0, 0.15);
+}
+
+.podium-item-platform.amazon:hover {
+    border-color: rgba(255, 153, 0, 0.6);
+    box-shadow: 0 10px 20px rgba(255, 153, 0, 0.15);
+}
+
+.podium-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    color: #d4ff3f;
+    text-decoration: none;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    background: rgba(212, 255, 63, 0.1);
+    white-space: nowrap;
+}
+
+.podium-link:hover {
+    background: rgba(212, 255, 63, 0.2);
+    color: white;
+    transform: scale(1.05);
+}
+
+.podium-link.ml-link {
+    color: #ffe600;
+    background: rgba(255, 230, 0, 0.1);
+}
+
+.podium-link.ml-link:hover {
+    background: rgba(255, 230, 0, 0.2);
+    color: white;
+}
+
+.podium-link.amazon-link {
+    color: #ff9900;
+    background: rgba(255, 153, 0, 0.1);
+}
+
+.podium-link.amazon-link:hover {
+    background: rgba(255, 153, 0, 0.2);
+    color: white;
+}
+
+/* Gradientes específicos para cada plataforma */
+.podium-section.ml-section {
+    background: linear-gradient(135deg, rgba(255, 230, 0, 0.05) 0%, rgba(26, 26, 26, 0.8) 100%);
+    border: 1px solid rgba(255, 230, 0, 0.2);
+}
+
+.podium-section.amazon-section {
+    background: linear-gradient(135deg, rgba(255, 153, 0, 0.05) 0%, rgba(26, 26, 26, 0.8) 100%);
+    border: 1px solid rgba(255, 153, 0, 0.2);
+}
+
+/* Container dos pódios */
+.podium-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .podium-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Badges de plataforma nos pódios */
+.podium-platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.podium-platform-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}

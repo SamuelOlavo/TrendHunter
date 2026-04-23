@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trend Hunter Analytics Dashboard</title>
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d4ff3f'/%3E%3Cstop offset='100%25' style='stop-color:%23b8e600'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23grad)'/%3E%3Cg transform='translate(6,6)'%3E%3Crect x='2' y='2' width='16' height='16' rx='3' fill='%23000' opacity='0.9'/%3E%3Crect x='4' y='6' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='9' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='12' width='9' height='1.5' fill='%23d4ff3f'/%3E%3Cpath d='M13 13l2.5-2.5 2.5 2.5-2.5 2.5-2.5-2.5z' fill='%23d4ff3f'/%3E%3C/g%3E%3C/svg%3E">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="bg-[#0f0f0f] text-white font-sans">
+    <!-- Navigation igual página index -->
+    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto">
+        <div class="flex items-center gap-3">
+            <!-- Logo/Ícone igual index -->
+            <div class="w-10 h-10 bg-[#d4ff3f] rounded-lg flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3h18v18H3V3zm16 16V5H5v14h14z" fill="#000" />
+                    <path d="M7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z" fill="#000" />
+                </svg>
+            </div>
+            <div class="flex items-baseline gap-1">
+                <span class="font-bold text-2xl text-white">Trend</span>
+                <span class="font-bold text-2xl text-[#d4ff3f]"> Hunter</span>
+                <span class="text-gray-400 ml-2">Analytics</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <button id="refreshBtn"
+                class="bg-[#1a1a1a] text-white px-4 py-2 rounded-lg border border-white/10 hover:bg-white/10 transition">
+                <i class="fas fa-sync-alt mr-2"></i>Atualizar
+            </button>
+            <button id="exportBtn"
+                class="bg-[#d4ff3f] text-black px-4 py-2 rounded-lg font-bold hover:bg-white transition">
+                <i class="fas fa-download mr-2"></i>Exportar
+            </button>
+        </div>
+    </nav>
+
+
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Oportunidades de Preço -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-white flex items-center">
+                    <i class="fas fa-fire text-orange-500 mr-2"></i>
+                    Oportunidades de Preço
+                    <span class="ml-2 px-2 py-1 bg-orange-500/20 text-orange-400 text-xs rounded-full">
+                        Queda de Preço
+                    </span>
+                </h3>
+                <button id="refreshOpportunities"
+                    class="bg-[#d4ff3f] text-black px-4 py-2 rounded-lg hover:bg-white transition text-sm font-bold">
+                    <i class="fas fa-sync-alt mr-2"></i>Atualizar
+                </button>
+            </div>
+
+            <div id="opportunitiesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Cards de oportunidades serão inseridos aqui -->
+                <div class="text-center text-gray-400 col-span-full py-8">
+                    <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                    <p>Carregando oportunidades...</p>
+                </div>
+            </div>
+
+            <div id="noOpportunities" class="hidden text-center text-gray-400 py-8">
+                <i class="fas fa-chart-line text-4xl mb-4 opacity-50"></i>
+                <p class="text-lg font-medium mb-2">Nenhuma oportunidade encontrada</p>
+                <p class="text-sm">Os produtos estão com preços estáveis nos últimos 5 dias</p>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
+            <h2 class="text-lg font-semibold mb-4 text-white">Filtros Dinâmicos dos Gráficos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Platform</label>
+                    <select id="platformFilter"
+                        class="w-full bg-[#0f0f0f] border border-white/10 text-white rounded-md px-3 py-2">
+                        <option value="">Todas</option>
+                        <option value="Mercado Livre">Mercado Livre</option>
+                        <option value="Amazon">Amazon</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Categoria</label>
+                    <select id="categoryFilter"
+                        class="w-full bg-[#0f0f0f] border border-white/10 text-white rounded-md px-3 py-2">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <input type="text" id="dateFrom" placeholder="Data Inicial (dd/MM/yyyy)"
+                    class="bg-[#0f0f0f] border border-white/10 text-white rounded px-3 py-2 flex-1">
+                <input type="text" id="dateTo" placeholder="Data Final (dd/MM/yyyy) "
+                    class="bg-[#0f0f0f] border border-white/10 text-white rounded px-3 py-2 flex-1">
+                <div class="flex items-end">
+                    <button id="todayFilter"
+                        class="bg-[#d4ff3f] text-black px-4 py-2 rounded-md hover:bg-white transition text-sm font-bold">
+                        <i class="fas fa-calendar-day mr-2"></i>Hoje
+                    </button>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+                <button id="applyFilters"
+                    class="bg-[#d4ff3f] text-black px-6 py-2 rounded-md hover:bg-white transition font-bold">
+                    <i class="fas fa-filter mr-2"></i>Aplicar Filtros
+                </button>
+                <button id="clearFilters"
+                    class="bg-[#1a1a1a] text-white px-6 py-2 rounded-md border border-white/10 hover:bg-white/10 transition">
+                    <i class="fas fa-times mr-2"></i>Limpar
+                </button>
+            </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-blue-500/20 rounded-full">
+                        <i class="fas fa-box text-blue-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Total Produtos</p>
+                        <p id="totalProducts" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-green-500/20 rounded-full">
+                        <i class="fas fa-dollar-sign text-green-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Preço Médio</p>
+                        <p id="avgPrice" class="text-2xl font-bold text-white">R$ 0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-yellow-500/20 rounded-full">
+                        <i class="fas fa-store text-yellow-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Platforms</p>
+                        <p id="totalPlatforms" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex items-center">
+                    <div class="p-3 bg-purple-500/20 rounded-full">
+                        <i class="fas fa-tags text-purple-400 text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-400">Categorias</p>
+                        <p id="totalCategories" class="text-2xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Gráficos -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-white">Produtos por Platform</h3>
+                    <div class="flex gap-2">
+                        <button id="platformChartAll"
+                            class="chart-filter-btn bg-[#d4ff3f] text-black px-3 py-1 rounded text-sm hover:bg-white font-bold">
+                            Todas
+                        </button>
+                        <button id="platformChartML"
+                            class="chart-filter-btn bg-[#1a1a1a] border border-white/10 text-gray-400 px-3 py-1 rounded text-sm hover:bg-white/10">
+                            ML
+                        </button>
+                        <button id="platformChartAZ"
+                            class="chart-filter-btn bg-[#1a1a1a] border border-white/10 text-gray-400 px-3 py-1 rounded text-sm hover:bg-white/10">
+                            Amazon
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="platformChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-white">Distribuição por Categoria</h3>
+                    <div class="flex gap-2">
+                        <button id="categoryChartTop10"
+                            class="chart-filter-btn bg-[#d4ff3f] text-black px-3 py-1 rounded text-sm hover:bg-white font-bold">
+                            Top 10
+                        </button>
+                        <button id="categoryChartTop5"
+                            class="chart-filter-btn bg-[#1a1a1a] border border-white/10 text-gray-400 px-3 py-1 rounded text-sm hover:bg-white/10">
+                            Top 5
+                        </button>
+                        <button id="categoryChartAll"
+                            class="chart-filter-btn bg-[#1a1a1a] border border-white/10 text-gray-400 px-3 py-1 rounded text-sm hover:bg-white/10">
+                            Todas
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Evolução de Ranking -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-white">Evolução de Ranking dos Produtos </h3>
+                <div class="flex gap-2">
+                    <button id="rankingChartTop5"
+                        class="chart-filter-btn bg-[#d4ff3f] text-black px-3 py-1 rounded text-sm hover:bg-white font-bold">
+                        Top 5
+                    </button>
+                    <button id="rankingChartTop10"
+                        class="chart-filter-btn bg-[#1a1a1a] border border-white/10 text-gray-400 px-3 py-1 rounded text-sm hover:bg-white/10">
+                        Top 10
+                    </button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="rankingChart"></canvas>
+            </div>
+            <div class="mt-4 text-sm text-gray-400">
+                <i class="fas fa-info-circle mr-2"></i>
+                <strong>Como funciona:</strong> O gráfico combina frequência de aparição com análise de evolução de
+                ranking para mostrar os produtos mais relevantes do mercado e sua performance temporal
+                ranqueados).
+                <br><br>
+                <strong>Top 5/Top 10:</strong> Produtos com maior frequência de aparições históricas.
+            </div>
+        </div>
+
+        <!-- Pódio dos 5 Produtos com Maior Frequência -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
+            <h3 class="text-lg font-semibold text-white mb-4">
+                <i class="fas fa-trophy mr-2 text-[#d4ff3f]"></i>
+                Pódio - Top 5 Produtos com Maior Frequência por Plataforma
+            </h3>
+
+            <!-- Divisão vertical dos pódios -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Pódio Mercado Livre -->
+                <div
+                    class="bg-gradient-to-br from-[#ffe600]/10 to-transparent border border-[#ffe600]/20 rounded-lg p-4">
+                    <h4 class="text-md font-semibold text-white mb-3 flex items-center">
+                        <span class="platform-badge ml-badge mr-2">ML</span>
+                        Mercado Livre - Top 5
+                    </h4>
+                    <div id="mlPodiumContainer" class="space-y-3">
+                        <div class="text-center text-gray-400 py-6">
+                            <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                            <p class="text-sm">Carregando pódio ML...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pódio Amazon -->
+                <div
+                    class="bg-gradient-to-br from-[#ff9900]/10 to-transparent border border-[#ff9900]/20 rounded-lg p-4">
+                    <h4 class="text-md font-semibold text-white mb-3 flex items-center">
+                        <span class="platform-badge amazon-badge mr-2">AZ</span>
+                        Amazon - Top 5
+                    </h4>
+                    <div id="amazonPodiumContainer" class="space-y-3">
+                        <div class="text-center text-gray-400 py-6">
+                            <i class="fas fa-spinner fa-spin text-xl mb-2"></i>
+                            <p class="text-sm">Carregando pódio Amazon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+            <h3 class="text-lg font-semibold mb-4 text-white">Dados Detalhados</h3>
+            <div class="overflow-x-auto">
+                <table id="dataTable" class="min-w-full divide-y divide-white/10">
+                    <thead class="bg-[#0f0f0f]">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Platform</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Produto</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Categoria</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Ranking</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Preço</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Data</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="bg-[#1a1a1a] divide-y divide-white/10">
+                        <!-- Dados serão inseridos aqui -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

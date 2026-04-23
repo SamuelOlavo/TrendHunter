@@ -1,0 +1,32 @@
+{
+  "name": "trend-hunter",
+  "version": "1.0.0",
+  "description": "ML Trend Hunter - Plataforma de Análise de E-commerce",
+  "main": "index.html",
+  "scripts": {
+    "start": "echo 'Starting Trend Hunter dashboard'",
+    "build": "echo 'Build completed successfully'",
+    "dev": "echo 'Development mode'",
+    "vercel-build": "echo 'Vercel build completed'"
+  },
+  "keywords": [
+    "trend",
+    "hunter",
+    "analytics",
+    "supabase",
+    "ecommerce",
+    "mercadolivre",
+    "amazon",
+    "dashboard",
+    "vercel"
+  ],
+  "author": "Samuel Olavo",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SamuelOlavo/MlHunterTrend.git"
+  }
+}

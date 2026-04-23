@@ -385,7 +385,39 @@ GMAIL_REFRESH_TOKEN=refresh_token
 - **🟡 Prioritário**: Discord + Email
 - **🔴 Enterprise**: SLA dedicado
 
-## 📄 Licença
+## � Deploy no Vercel
+
+### Configuração Rápida
+1. **Conecte seu repositório** ao Vercel
+2. **Configure as variáveis de ambiente** no dashboard Vercel:
+   ```bash
+   SUPABASE_URL=your_supabase_url_here
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   NODE_ENV=production
+   ```
+3. **Deploy automático** será ativado a cada push
+
+### Deploy Manual
+```bash
+# Instale Vercel CLI
+npm install -g vercel
+
+# Faça deploy
+vercel --prod
+```
+
+### Estrutura para Vercel
+- **Frontend**: Arquivos estáticos (HTML, CSS, JS)
+- **Backend**: API Node.js em `/api/server.js`
+- **Configuração**: `vercel.json` com rotas e builds
+- **Banco de Dados**: Supabase PostgreSQL
+
+### ⚠️ Importante
+- **Netlify**: Não suporta backend Node.js (apenas frontend)
+- **Vercel**: ✅ Suporte completo para Node.js + frontend
+- **Render/Railway**: Alternativas com servidor completo
+
+## �📄 Licença
 
 Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
@@ -419,4 +451,4 @@ Este projeto está licenciado sob a **MIT License** - veja o arquivo [LICENSE](L
 
 **⭐ Se este projeto te ajudou, considere dar uma estrela no GitHub!**
 
-**🚀 Feito com ❤️ no Brasil por [Seu Nome]**
+**🚀 Feito com ❤️ no Brasil por Samuel Olavo]**
