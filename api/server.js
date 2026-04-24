@@ -555,6 +555,84 @@ app.get("/health", (req, res) => {
   });
 });
 
+// Test permissions endpoint
+app.get("/api/test-permissions", async (req, res) => {
+  try {
+    console.log("=== TESTE DE PERMISSÕES ===");
+
+    // Testar acesso à tabela products_trend
+    console.log("1. Testando SELECT básico em products_trend...");
+    const { data: basicData, error: basicError } = await supabase
+      .from("products_trend")
+      .select("count", { count: "exact", head: true });
+
+    if (basicError) {
+      console.error("Erro no SELECT básico:", basicError);
+      return res.status(500).json({
+        error: "Erro no SELECT básico",
+        details: basicError,
+        message: "Sem permissão para ler a tabela products_trend",
+      });
+    }
+
+    console.log("✅ SELECT básico funcionou:", basicData);
+
+    // Testar acesso à view vw_oportunidades_trend
+    console.log("2. Testando SELECT em vw_oportunidades_trend...");
+    const { data: viewData, error: viewError } = await supabase
+      .from("vw_oportunidades_trend")
+      .select("count", { count: "exact", head: true });
+
+    if (viewError) {
+      console.error("Erro na view:", viewError);
+      return res.status(500).json({
+        error: "Erro na view",
+        details: viewError,
+        message: "Sem permissão para ler a view vw_oportunidades_trend",
+      });
+    }
+
+    console.log("✅ SELECT na view funcionou:", viewData);
+
+    // Testar com dados reais
+    console.log("3. Testando busca de dados reais...");
+    const { data: realData, error: realError } = await supabase
+      .from("products_trend")
+      .select("id, data, platform, scraped_at")
+      .limit(3);
+
+    if (realError) {
+      console.error("Erro nos dados reais:", realError);
+      return res.status(500).json({
+        error: "Erro nos dados reais",
+        details: realError,
+      });
+    }
+
+    console.log("✅ Dados reais:", realData);
+
+    res.json({
+      status: "OK",
+      permissions: {
+        products_trend: "✅ Acesso permitido",
+        vw_oportunidades_trend: "✅ Acesso permitido",
+      },
+      counts: {
+        products_trend: basicData,
+        vw_oportunidades_trend: viewData,
+      },
+      sample_data: realData,
+      message: "Todas as permissões estão funcionando",
+    });
+  } catch (error) {
+    console.error("Erro no teste de permissões:", error);
+    res.status(500).json({
+      error: "Erro interno",
+      details: error.message,
+    });
+  }
+});
+
 // Servir arquivos estáticos
 app.use(express.static("public"));
 
