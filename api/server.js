@@ -10,12 +10,27 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Configuração Supabase - com variáveis de ambiente e fallback
-const supabaseUrl =
-  process.env.SUPABASE_URL || "https://htzfxelkqieqjdwqyvx.supabase.co";
-const supabaseKey =
-  process.env.SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0emZ4ZWxxaWVxamR3cXl2eCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzQ0NTkyOTY2LCJleHAiOjIwNjAyMjg5NjZ9.H2q6w_8K7y8pXoRfLpXhNqy5S8A9n5y7w3y2k8m4";
+// Configuração Supabase - apenas com variáveis de ambiente
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_ANON_KEY;
+
+// Validar variáveis de ambiente essenciais
+if (!supabaseUrl || !supabaseKey) {
+  console.error("❌ ERRO: Variáveis de ambiente do Supabase não configuradas!");
+  console.error(
+    "SUPABASE_URL:",
+    supabaseUrl ? "✅ Configurada" : "❌ NÃO CONFIGURADA",
+  );
+  console.error(
+    "SUPABASE_ANON_KEY:",
+    supabaseKey ? "✅ Configurada" : "❌ NÃO CONFIGURADA",
+  );
+  console.error("Configure as variáveis no dashboard do Vercel:");
+  console.error("1. Vá para Settings → Environment Variables");
+  console.error("2. Adicione SUPABASE_URL e SUPABASE_ANON_KEY");
+  console.error("3. Faça um novo deploy");
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
