@@ -367,9 +367,11 @@ app.get("/api/opportunities", async (req, res) => {
   }
 });
 
-// Endpoint para dados completos sem limitação (para gráficos)
+// Endpoint para analytics completo - usando SDK do Supabase
 app.get("/api/analytics-full", async (req, res) => {
   try {
+    console.log("=== INÍCIO /api/analytics-full ===");
+
     const { platform, category, date_from, date_to } = req.query;
 
     console.log("Buscando analytics completos com filtros:", {
@@ -379,44 +381,84 @@ app.get("/api/analytics-full", async (req, res) => {
       date_to,
     });
 
-    // Usar SDK do Supabase com coluna scraped_at (formato ISO)
-    let query = supabase
-      .from("products_trend")
-      .select("*", { count: "exact" })
-      .order("scraped_at", { ascending: false })
-      .order("ranking", { ascending: true });
+    // Verificar variáveis de ambiente
+    console.log("Variáveis de ambiente:");
+    console.log(
+      "SUPABASE_URL:",
+      process.env.SUPABASE_URL ? "Configurada" : "NÃO CONFIGURADA",
+    );
+    console.log(
+      "SUPABASE_ANON_KEY:",
+      process.env.SUPABASE_ANON_KEY ? "Configurada" : "NÃO CONFIGURADA",
+    );
 
-    // Aplicar filtros se existirem
-    if (platform) {
+    let query = supabase.from("products_trend").select("*");
+
+    // Filtros
+    if (platform && platform !== "all") {
       query = query.eq("platform", platform);
+      console.log(`Aplicando filtro platform: ${platform}`);
     }
 
-    if (category) {
-      query = query.eq("category", category);
+    if (category && category !== "all") {
+      if (category === "top10") {
+        // Para top10, buscar as 10 categorias mais frequentes
+        console.log("Buscando top10 categorias...");
+        const { data: categories, error: catError } = await supabase
+          .from("products_trend")
+          .select("category")
+          .not("category", "is", null);
+
+        if (catError) {
+          console.error("Erro ao buscar categorias:", catError);
+          return res
+            .status(500)
+            .json({ error: "Erro ao buscar categorias: " + catError.message });
+        }
+
+        const categoryCounts = {};
+        categories.forEach((item) => {
+          categoryCounts[item.category] =
+            (categoryCounts[item.category] || 0) + 1;
+        });
+
+        const topCategories = Object.entries(categoryCounts)
+          .sort(([, a], [, b]) => b - a)
+          .slice(0, 10)
+          .map(([cat]) => cat);
+
+        query = query.in("category", topCategories);
+        console.log("Top10 categorias:", topCategories);
+      } else {
+        query = query.eq("category", category);
+        console.log(`Aplicando filtro category: ${category}`);
+      }
     }
 
-    // Filtros de data usando scraped_at (formato ISO)
+    // Filtro de data - usando scraped_at
     if (date_from) {
-      // date_from já vem em formato ISO do frontend (YYYY-MM-DD)
-      // Verificar se tem formato válido antes de processar
       if (date_from.match(/^\d{4}-\d{2}-\d{2}$/)) {
         const isoDateFrom = `${date_from}T00:00:00.000Z`;
         query = query.gte("scraped_at", isoDateFrom);
         console.log(`Filtro scraped_at >= ${isoDateFrom}`);
       } else {
         console.log(`Formato date_from inválido: ${date_from}`);
+        return res
+          .status(400)
+          .json({ error: "Formato date_from inválido. Use YYYY-MM-DD" });
       }
     }
 
     if (date_to) {
-      // date_to já vem em formato ISO do frontend (YYYY-MM-DD)
-      // Verificar se tem formato válido antes de processar
       if (date_to.match(/^\d{4}-\d{2}-\d{2}$/)) {
         const isoDateTo = `${date_to}T23:59:59.999Z`;
         query = query.lte("scraped_at", isoDateTo);
         console.log(`Filtro scraped_at <= ${isoDateTo}`);
       } else {
         console.log(`Formato date_to inválido: ${date_to}`);
+        return res
+          .status(400)
+          .json({ error: "Formato date_to inválido. Use YYYY-MM-DD" });
       }
     }
 
@@ -426,7 +468,17 @@ app.get("/api/analytics-full", async (req, res) => {
 
     if (error) {
       console.error("Erro ao buscar analytics completos:", error);
-      return res.status(500).json({ error: error.message });
+      console.error("Detalhes do erro:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+      return res.status(500).json({
+        error: error.message,
+        details: error.details,
+        code: error.code,
+      });
     }
 
     console.log("Dados completos carregados:", data?.length || 0, "produtos");
@@ -441,14 +493,23 @@ app.get("/api/analytics-full", async (req, res) => {
       console.log("Nenhum dado encontrado com os filtros aplicados");
     }
 
-    res.json({
+    const response = {
       data: data || [],
       count: data?.length || 0,
       total: count || 0,
-    });
+    };
+
+    console.log("Resposta enviada:", response);
+    console.log("=== FIM /api/analytics-full ===");
+
+    res.json(response);
   } catch (error) {
     console.error("Erro interno ao buscar analytics completos:", error);
-    res.status(500).json({ error: error.message });
+    console.error("Stack trace:", error.stack);
+    res.status(500).json({
+      error: error.message,
+      stack: error.stack,
+    });
   }
 });
 
