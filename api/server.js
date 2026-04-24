@@ -477,6 +477,24 @@ app.get("/api/analytics-full", async (req, res) => {
       }
     }
 
+    // Debug: verificar se existem dados na tabela antes de aplicar filtros
+    console.log("=== DEBUG: Verificando dados na tabela ===");
+    const { data: allData, error: allError } = await supabase
+      .from("products_trend")
+      .select("scraped_at, platform, data")
+      .limit(5);
+
+    if (allError) {
+      console.error("Erro ao buscar dados de debug:", allError);
+    } else {
+      console.log("Primeiros 5 registros na tabela:");
+      allData.forEach((item, index) => {
+        console.log(
+          `  ${index + 1}. scraped_at: ${item.scraped_at}, platform: ${item.platform}, data: ${item.data}`,
+        );
+      });
+    }
+
     console.log("Executando query com SDK do Supabase...");
 
     const { data, error, count } = await query;
