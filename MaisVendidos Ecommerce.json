@@ -1,25 +1,6 @@
 {
-  "name": "MaisVendidos Ecommerce",
+  "name": "TrendHunter",
   "nodes": [
-    {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 10
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -480,
-        160
-      ],
-      "id": "3283bca0-5eda-4143-a272-972b3cd19dbc",
-      "name": "Schedule Trigger1"
-    },
     {
       "parameters": {
         "url": "https://www.mercadolivre.com.br/mais-vendidos",
@@ -204,24 +185,6 @@
     },
     {
       "parameters": {
-        "httpMethod": "POST",
-        "path": "cadastro-lista",
-        "responseMode": "lastNode",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.webhook",
-      "typeVersion": 2.1,
-      "position": [
-        832,
-        -400
-      ],
-      "id": "1fe63448-d792-423c-9b25-69ce179e9037",
-      "name": "Webhook",
-      "webhookId": "774b8288-55f3-43b1-a75d-d63705a36f57",
-      "disabled": true
-    },
-    {
-      "parameters": {
         "aggregate": "aggregateAllItemData",
         "options": {}
       },
@@ -229,7 +192,7 @@
       "typeVersion": 1,
       "position": [
         352,
-        -400
+        -304
       ],
       "id": "542dda61-893e-4f47-860c-8e277f1f42ad",
       "name": "Aggregate2"
@@ -255,7 +218,7 @@
       "typeVersion": 1,
       "position": [
         -16,
-        -400
+        -304
       ],
       "id": "7fd2c4ae-ec6d-410c-bd7f-21c44202cc0b",
       "name": "Sort1"
@@ -269,7 +232,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         -464,
-        -560
+        -464
       ],
       "typeVersion": 1,
       "id": "0c3c1a36-b191-4429-94ee-0cd7f454a7c5",
@@ -288,7 +251,7 @@
       "typeVersion": 2.2,
       "position": [
         576,
-        -400
+        -304
       ],
       "id": "5aa3ba15-9be8-42eb-87c8-bc0f36bd54c3",
       "name": "Lista Prime",
@@ -302,25 +265,6 @@
     },
     {
       "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "triggerAtHour": 19
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -416,
-        -400
-      ],
-      "id": "fea3f99b-5d32-42a3-8c30-2df2e9475a2a",
-      "name": "Schedule Trigger"
-    },
-    {
-      "parameters": {
         "content": "## Email Bem Vindo Site\n\n### Emails De boas vindas vindo da pagina web, Teste Gratis vão receber uma vez so.",
         "height": 352,
         "width": 1248,
@@ -329,7 +273,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [
         752,
-        -560
+        -464
       ],
       "typeVersion": 1,
       "id": "cde0b263-ed81-4816-bc3f-ba8ce6f0ce44",
@@ -339,7 +283,7 @@
       "parameters": {
         "content": "## Busca dos produtos ML\n\n### Raspagem do site ML dos produtos mais vendidos, salva do o Supabase.\n",
         "height": 320,
-        "width": 1664
+        "width": 1472
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
@@ -379,7 +323,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        96,
+        -48,
         352
       ],
       "id": "2f8c3ad1-68c1-4575-929f-764f29584481",
@@ -392,7 +336,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        320,
+        176,
         352
       ],
       "id": "9e92854e-358d-4095-9635-665539ce3f1a",
@@ -401,8 +345,8 @@
     {
       "parameters": {
         "content": "## Busca dos produtos Amazon\n\n### Raspagem do site Amazon dos produtos mais vendidos, salva do o Supabase.\n",
-        "height": 592,
-        "width": 1664,
+        "height": 368,
+        "width": 928,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -479,7 +423,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        560,
+        384,
         352
       ],
       "id": "73c7ef49-ec73-4b60-90ac-684a38b48465",
@@ -493,35 +437,35 @@
           "fieldValues": [
             {
               "fieldId": "platform",
-              "fieldValue": "={{ $json.Loja }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Loja }}"
             },
             {
               "fieldId": "name",
-              "fieldValue": "={{ $json.Produto }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Produto }}"
             },
             {
               "fieldId": "category",
-              "fieldValue": "={{ $json[\"Seção\"] }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Seção }}"
             },
             {
               "fieldId": "ranking",
-              "fieldValue": "={{ $json.Ranking }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Ranking }}"
             },
             {
               "fieldId": "price_current",
-              "fieldValue": "={{ $json[\"Preço\"] }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Preço }}"
             },
             {
               "fieldId": "image_url",
-              "fieldValue": "={{ $json.Foto }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Foto }}"
             },
             {
               "fieldId": "url",
-              "fieldValue": "={{ $json.Link }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.LinkAfiliado }}"
             },
             {
               "fieldId": "data",
-              "fieldValue": "={{ $json.Data }}"
+              "fieldValue": "={{ $('Edit Amazon').item.json.Data }}"
             }
           ]
         }
@@ -529,7 +473,7 @@
       "type": "n8n-nodes-base.supabase",
       "typeVersion": 1,
       "position": [
-        1088,
+        608,
         352
       ],
       "id": "ad3fdebc-701a-4e89-a8e4-ee2d4634c59a",
@@ -616,7 +560,7 @@
       "typeVersion": 1,
       "position": [
         -224,
-        -400
+        -304
       ],
       "id": "bda92100-300b-49c6-85d9-541c5ed0714f",
       "name": "Consulta dados",
@@ -655,7 +599,7 @@
       "typeVersion": 2.3,
       "position": [
         176,
-        -400
+        -304
       ],
       "id": "ba5757d6-2b0d-4ac0-8505-7e5a1655170a",
       "name": "Filter1"
@@ -669,10 +613,11 @@
       "typeVersion": 1,
       "position": [
         1584,
-        -400
+        -304
       ],
       "id": "fe1ac5ef-b5f7-4ea7-bc2c-34d1748535ac",
-      "name": "Aggregate3"
+      "name": "Aggregate3",
+      "disabled": true
     },
     {
       "parameters": {
@@ -695,10 +640,11 @@
       "typeVersion": 1,
       "position": [
         1216,
-        -400
+        -304
       ],
       "id": "81a3f068-b9b2-4293-bd50-b1a7d565fa50",
-      "name": "Sort2"
+      "name": "Sort2",
+      "disabled": true
     },
     {
       "parameters": {
@@ -720,7 +666,7 @@
       "typeVersion": 1,
       "position": [
         1024,
-        -400
+        -304
       ],
       "id": "2bc2b9fd-c445-4a92-8e76-7dd28343c348",
       "name": "Consulta dados1",
@@ -729,7 +675,8 @@
           "id": "up7gbGyuVDUYJBzt",
           "name": "Supabase account"
         }
-      }
+      },
+      "disabled": true
     },
     {
       "parameters": {
@@ -759,14 +706,15 @@
       "typeVersion": 2.3,
       "position": [
         1392,
-        -400
+        -304
       ],
       "id": "32355584-230b-48e6-80a7-a78eb5aac527",
-      "name": "Filter2"
+      "name": "Filter2",
+      "disabled": true
     },
     {
       "parameters": {
-        "sendTo": "={{ $('Webhook').item.json.body.email }}",
+        "sendTo": "={{ $('Webhook_site').item.json.body.email }}",
         "subject": "🚀 Bem-vindo ao ML Trend Hunter",
         "message": "=<div style=\"font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; background-color: #f4f7f6; padding: 20px; border-radius: 15px;\">\n  \n  <div style=\"text-align: center; padding-bottom: 20px;\">\n    <h2 style=\"color: #1a1a1a; margin-bottom: 5px;\">🚀 Trend Hunter: Relatório Diário</h2>\n    <p style=\"color: #666; font-size: 14px;\">As melhores oportunidades encontradas em {{ $json.data[0].data }}</p>\n  </div>\n\n  {{ $json.data.map(item => `\n    <table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"background-color: white; border: 1px solid #e0e0e0; border-radius: 12px; margin-bottom: 15px; overflow: hidden;\">\n      <tr>\n        <td width=\"120\" style=\"padding: 15px; text-align: center; background-color: #fff;\">\n          <img src=\"${item.image_url}\" width=\"100\" style=\"border-radius: 5px; display: block; margin: auto; object-fit: contain;\">\n        </td>\n        \n        <td style=\"padding: 15px; vertical-align: top;\">\n          <div style=\"background: ${item.platform === 'Amazon' ? '#ff9900' : '#ffe600'}; color: #000; display: inline-block; padding: 3px 10px; border-radius: 20px; font-weight: bold; font-size: 10px; text-transform: uppercase;\">\n            ${item.platform} | #${item.ranking} no Ranking\n          </div>\n          \n          <strong style=\"font-size: 15px; color: #2c3e50; display: block; margin: 10px 0 5px 0; line-height: 1.4;\">\n            ${item.name.replace(/&#x27;/g, \"'\")}\n          </strong>\n          \n          <span style=\"color: #95a5a6; font-size: 12px; display: block; margin-bottom: 15px;\">Categoria: ${item.category}</span>\n          \n          <table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n            <tr>\n              <td>\n                <span style=\"color: #27ae60; font-weight: bold; font-size: 20px;\">\n                  R$ ${item.price_current.toLocaleString('pt-BR', {minimumFractionDigits: 2})}\n                </span>\n              </td>\n              <td align=\"right\">\n                <a href=\"${item.url}\" style=\"background-color: #2980b9; color: white; text-decoration: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: bold; display: inline-block;\">\n                  Ver Oferta\n                </a>\n              </td>\n            </tr>\n          </table>\n        </td>\n      </tr>\n    </table>\n  `).join('') }}\n\n  <div style=\"background: linear-gradient(135deg, #2c3e50, #000); color: #fff; padding: 25px; border-radius: 12px; margin-top: 30px; text-align: justify; border: 2px solid #d4ff3f;\">\n    <h3 style=\"color: #d4ff3f; margin-top: 0;\">💎 Quer ter acesso a lista completa</h3>\n    <p style=\"font-size: 14px; line-height: 1.6; margin-bottom: 20px;\">\n      Este é apenas um resumo. Assine o <strong>Plano Prime</strong> e tenha acesso a toda plataforma com dashboard em tempo real com centenas de produtos minerados. </br> Descubra em tempo real o que o Brasil está comprando!\n    </p>\n    \n    <div style=\"background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; font-size: 14px; text-align: left; border-left: 4px solid #d4ff3f;\">\n      <strong>Valor:</strong> R$ 47,00/mês<br>\n      <strong>Chave PIX:</strong> sua-chave-aqui@email.com<br>\n      <strong>Beneficiário:</strong> Samuel Olavo\n    </div>\n\n    <p style=\"font-size: 12px; margin-top: 20px; color: #bdc3c7;\">\n      Envie o comprovante em anexo para liberar seu acesso imediatamente.\n    </p>\n  </div>\n\n  <div style=\"text-align: center; margin-top: 20px; color: #95a5a6; font-size: 11px;\">\n    <p>Monitoramento automático via <strong>Trend Hunter</strong></p>\n  </div>\n</div>",
         "options": {
@@ -777,7 +725,7 @@
       "typeVersion": 2.2,
       "position": [
         1776,
-        -400
+        -304
       ],
       "id": "1854f7ff-6372-44c7-9a2d-8d1e8d915a6f",
       "name": "Boas Vindas1",
@@ -787,12 +735,112 @@
           "id": "zfZ47XQtjemP0EOz",
           "name": "Gmail account"
         }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "__CUSTOM_API_CALL__"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        288
+      ],
+      "id": "c3184e16-417b-4db8-b802-112f4292f475",
+      "name": "HistóricoComparativo",
+      "credentials": {
+        "supabaseApi": {
+          "id": "up7gbGyuVDUYJBzt",
+          "name": "Supabase account"
+        }
       }
     },
     {
       "parameters": {
+        "operation": "getAll",
+        "tableId": "vw_oportunidades_trend",
+        "returnAll": true,
+        "matchType": "allFilters"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1056,
+        352
+      ],
+      "id": "10eaeab5-6e79-4fd4-a089-47a8f7f398e1",
+      "name": "vw_oportunidades_trend",
+      "credentials": {
+        "supabaseApi": {
+          "id": "up7gbGyuVDUYJBzt",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "compare": "selectedFields",
+        "fieldsToCompare": "name",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.removeDuplicates",
+      "typeVersion": 2,
+      "position": [
+        1280,
+        352
+      ],
+      "id": "7d95dab5-3b6f-4c04-8972-2151a4aa20e7",
+      "name": "Remove Duplicates1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2000,
+        368
+      ],
+      "id": "9231d98a-d925-4d85-9275-7fc8221f8b8f",
+      "name": "Wait",
+      "webhookId": "a70f88b6-fd87-4f74-b397-ebbdc0c4b348"
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1520,
+        352
+      ],
+      "id": "6cf6c6c4-9655-4598-8632-86ed4ec6a6ed",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "## Envio de promocoes  Grupo Telegram \n\n#### Mensagem Telegram Grupo Trend Hunter",
+        "height": 368,
+        "width": 1360,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        816,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "d604d654-da9a-4df9-afd9-09e3fee5bd38",
+      "name": "RemoveDuplicados"
+    },
+    {
+      "parameters": {
         "chatId": "-1003894399410",
-        "text": "=<a href=\"{{ $json.Foto }}\">‎</a>\n✨ <b>OFERTA IMPERDÍVEL ENCONTRADA!</b> ✨\n\n📦 <b>Produto:</b>\n<code>{{ $json.Produto }}</code>\n\n💰 <b>Preço Especial:</b>\n<pre>R$ {{ $json.Preço }}</pre>\n\n📌 <i>Corra antes que o estoque acabe!</i>\n<b>Acesse pelo link oficial:</b>\n{{ $json.LinkAfiliado }}",
+        "text": "=<a href=\"{{ $json.image_url }}\">&#8205;</a>\n\n🔥 <b>QUEDA DE PREÇO DETECTADA!</b>\n\n📦 <b>{{ $json.name }}</b>\n🏆 Ranking: #{{ $json.ranking }} em {{ $json.category }}\n\n💰 De: <s>R$ {{ $json.preco_anterior.toFixed(2).replace('.', ',') }}</s>\n📉 <b>Por: R$ {{ $json.preco_novo.toFixed(2).replace('.', ',') }}</b>\n✨ <i>(Economia de {{ $json.porcentagem_queda.toFixed(0) }}%)</i>\n\n📍 Loja: <b>{{ $json.platform }}</b>\n\n🔗 <a href=\"{{ $json.url }}\">VER PRODUTO NA {{ $json.platform.toUpperCase() }}</a>\n<a href=\"{{ $json.foto }}\">&#8205;</a>",
         "replyMarkup": "inlineKeyboard",
         "inlineKeyboard": {
           "rows": [
@@ -802,7 +850,7 @@
                   {
                     "text": "🛒 IR PARA A LOJA",
                     "additionalFields": {
-                      "url": "={{ $json.LinkAfiliado }}"
+                      "url": "={{ $json.url }}"
                     }
                   }
                 ]
@@ -819,11 +867,11 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1088,
-        560
+        1744,
+        368
       ],
       "id": "e67976de-667a-4a0d-b197-89e836e93b7a",
-      "name": "Send a text message",
+      "name": "MensagemTelegram",
       "webhookId": "d97e63db-2fd3-4309-95bc-7cec9c8ca858",
       "alwaysOutputData": false,
       "executeOnce": false,
@@ -838,52 +886,308 @@
     },
     {
       "parameters": {
-        "options": {
-          "reset": false
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 17
+            }
+          ]
         }
       },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
       "position": [
-        832,
-        544
+        848,
+        352
       ],
-      "id": "6cf6c6c4-9655-4598-8632-86ed4ec6a6ed",
-      "name": "Loop Over Items"
+      "id": "93a030d3-a6bf-41fd-b301-09faf2f90381",
+      "name": "TriggerMensagem"
     },
     {
       "parameters": {
-        "amount": 15
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
       },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
       "position": [
-        1344,
-        560
+        -400,
+        352
       ],
-      "id": "9231d98a-d925-4d85-9275-7fc8221f8b8f",
-      "name": "Wait",
-      "webhookId": "a70f88b6-fd87-4f74-b397-ebbdc0c4b348"
+      "id": "3283bca0-5eda-4143-a272-972b3cd19dbc",
+      "name": "TriggerRaspagem"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 23
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -416,
+        -304
+      ],
+      "id": "fea3f99b-5d32-42a3-8c30-2df2e9475a2a",
+      "name": "TriggerEmail_lista_prime"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cadastro-lista",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        -304
+      ],
+      "id": "1fe63448-d792-423c-9b25-69ce179e9037",
+      "name": "Webhook_site",
+      "webhookId": "774b8288-55f3-43b1-a75d-d63705a36f57",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══════════════════════════════════════════════════════\n// SHOPEE AFFILIATE AUTH — v7 (SOLUÇÃO DEFINITIVA)\n// \n// Causa raiz de todos os erros anteriores:\n// O campo keyword:\"\" dentro da GraphQL query causava\n// duplo escape de aspas entre o Code Node e o HTTP Request.\n//\n// Solução: keyword é opcional — removido da query.\n// O body é gerado via JSON.stringify() AQUI e passado\n// diretamente ao HTTP Request via expressão.\n// Assinatura e body são garantidamente idênticos.\n// ═══════════════════════════════════════════════════════\n\nfunction sha256(ascii) {\n  function rightRotate(value, amount) {\n    return (value >>> amount) | (value << (32 - amount));\n  }\n  var mathPow = Math.pow;\n  var maxWord = mathPow(2, 32);\n  var i, j;\n  var result = '';\n  var words = [];\n  var asciiBitLength = ascii.length * 8;\n  var hash = sha256.h = sha256.h || [];\n  var k = sha256.k = sha256.k || [];\n  var primeCounter = k.length;\n  var isComposite = {};\n  for (var candidate = 2; primeCounter < 64; candidate++) {\n    if (!isComposite[candidate]) {\n      for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;\n      hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;\n      k[primeCounter++] = (mathPow(candidate, 1/3) * maxWord) | 0;\n    }\n  }\n  ascii += '\\x80';\n  while (ascii.length % 64 - 56) ascii += '\\x00';\n  for (i = 0; i < ascii.length; i++) {\n    j = ascii.charCodeAt(i);\n    words[i >> 2] |= j << ((3 - i) % 4 * 8);\n  }\n  words[words.length] = ((asciiBitLength / maxWord) | 0);\n  words[words.length] = asciiBitLength;\n  for (j = 0; j < words.length;) {\n    var w = words.slice(j, j += 16);\n    var oldHash = hash.slice(0);\n    hash = hash.slice(0, 8);\n    for (i = 0; i < 64; i++) {\n      var w15 = w[i - 15], w2 = w[i - 2];\n      var a = hash[0], e = hash[4];\n      var temp1 = hash[7]\n        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))\n        + ((e & hash[5]) ^ (~e & hash[6]))\n        + k[i]\n        + (w[i] = (i < 16) ? w[i] : (\n            w[i - 16]\n            + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))\n            + w[i - 7]\n            + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))\n          ) | 0\n        );\n      var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))\n        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));\n      hash = [(temp1 + temp2) | 0].concat(hash);\n      hash[4] = (hash[4] + temp1) | 0;\n      hash.length = 8;\n    }\n    hash = hash.map(function(a, i) { return (a + oldHash[i]) | 0; });\n  }\n  for (i = 0; i < 8; i++) {\n    for (j = 3; j + 1; j--) {\n      var b = (hash[i] >> (j * 8)) & 255;\n      result += ((b < 16) ? 0 : '') + b.toString(16);\n    }\n  }\n  return result;\n}\n\nconst appId     = '18362700399';\nconst secret    = 'NQQN52SGLUWOQS2N4KKNOM56JGJFJ4P5';\nconst timestamp = Math.floor(Date.now() / 1000).toString();\n\n// Query SEM keyword (campo opcional) — elimina o problema de aspas escapadas\n// JSON.stringify garante que o body aqui = body enviado pelo HTTP Request\nconst body = JSON.stringify({\n  query: '{productOfferV2(listType:0,sortType:2,page:1,limit:50){nodes{itemId productName productLink offerLink imageUrl priceMin priceMax sales ratingStar commissionRate shopName shopId}pageInfo{page limit hasNextPage}}}'\n});\n\nconst toSign    = appId + timestamp + body + secret;\nconst signature = sha256(toSign);\nconst authHeader = `SHA256 Credential=${appId}, Timestamp=${timestamp}, Signature=${signature}`;\n\nreturn [{ json: { authHeader, body } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        720
+      ],
+      "id": "afb8c433-3c53-4f9d-815e-2ce55082e1bd",
+      "name": "Gera Auth Shopee1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open-api.affiliate.shopee.com.br/graphql",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ $('Gera Auth Shopee1').item.json.authHeader }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $('Gera Auth Shopee1').item.json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        176,
+        720
+      ],
+      "id": "a8d2c505-e202-4cfa-acd9-1a6b8c28b584",
+      "name": "Shopee Affiliate API1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = items[0].json;\nconst nodes = response?.data?.productOfferV2?.nodes || [];\n\nif (nodes.length === 0) {\n  return [{ json: {\n    erro: true,\n    mensagem: 'Nenhum produto retornado.',\n    raw: JSON.stringify(response).substring(0, 500)\n  }}];\n}\n\nreturn nodes.map((p, index) => ({\n  json: {\n    ranking: index + 1,\n    category: 'Mais Vendidos',\n    name: p.productName,\n    // CORREÇÃO: Removida a divisão por 100000 pois o valor já vem como string decimal\n    price: parseFloat(p.priceMin).toFixed(2), \n    image: p.imageUrl,\n    itemId: p.itemId,\n    shopId: p.shopId,\n    shopName: p.shopName,\n    commissionRate: p.commissionRate,\n    sales: p.sales,\n    ratingStar: p.ratingStar,\n    url: p.offerLink || p.productLink,\n    scraped_at: new Date().toISOString()\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        720
+      ],
+      "id": "07346f01-465d-4eb8-9ed5-08a5e03e5ab7",
+      "name": "Process Shopee1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "sh-001",
+              "name": "Ranking",
+              "value": "={{ $json.ranking }}",
+              "type": "number"
+            },
+            {
+              "id": "sh-002",
+              "name": "Seção",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-003",
+              "name": "Produto",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-004",
+              "name": "Preço",
+              "value": "={{ $json.price }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-005",
+              "name": "Foto",
+              "value": "={{ $json.image }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-006",
+              "name": "Link",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-007",
+              "name": "LinkAfiliado",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "sh-008",
+              "name": "Loja",
+              "value": "Shopee",
+              "type": "string"
+            },
+            {
+              "id": "sh-009",
+              "name": "Data",
+              "value": "={{ $now.format('dd/MM/yyyy') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        928,
+        720
+      ],
+      "id": "23ea1981-dda1-4247-a560-09d41efabad6",
+      "name": "Edit Shopee1",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "tableId": "products_trend",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "platform",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.Loja }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.Produto }}"
+            },
+            {
+              "fieldId": "category",
+              "fieldValue": "={{ $('Edit Shopee1').item.json['Seção'] }}"
+            },
+            {
+              "fieldId": "ranking",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.Ranking }}"
+            },
+            {
+              "fieldId": "price_current",
+              "fieldValue": "={{ $('Edit Shopee1').item.json['Preço'] }}"
+            },
+            {
+              "fieldId": "image_url",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.Foto }}"
+            },
+            {
+              "fieldId": "url",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.LinkAfiliado }}"
+            },
+            {
+              "fieldId": "data",
+              "fieldValue": "={{ $('Edit Shopee1').item.json.Data }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        720
+      ],
+      "id": "b05f9bba-183f-4269-ba3b-151a546a7203",
+      "name": "Create a row Shopee1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "up7gbGyuVDUYJBzt",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Busca dos produtos Shopee\n\n### Requisição na API da Shoppe dos mais vendidos da plataforma, salva do o Supabase.\n",
+        "height": 368,
+        "width": 1440,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        576
+      ],
+      "typeVersion": 1,
+      "id": "d6d21fbb-cf1f-42eb-9afe-23f667697970",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "sales",
+              "order": "descending"
+            },
+            {
+              "fieldName": "ratingStar",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        672,
+        720
+      ],
+      "id": "bd920438-d153-4a91-81f4-c7079d05d58a",
+      "name": "Sort"
     }
   ],
   "pinData": {},
   "connections": {
-    "Schedule Trigger1": {
-      "main": [
-        [
-          {
-            "node": "Mercado libre",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Amazon Best Sellers",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Mercado libre": {
       "main": [
         [
@@ -939,17 +1243,6 @@
         ]
       ]
     },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Consulta dados1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Aggregate2": {
       "main": [
         [
@@ -966,17 +1259,6 @@
         [
           {
             "node": "Filter1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Schedule Trigger": {
-      "main": [
-        [
-          {
-            "node": "Consulta dados",
             "type": "main",
             "index": 0
           }
@@ -1010,11 +1292,6 @@
         [
           {
             "node": "Create a row Amazon",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -1087,11 +1364,32 @@
         ]
       ]
     },
-    "Send a text message": {
+    "HistóricoComparativo": {
+      "main": [
+        []
+      ]
+    },
+    "vw_oportunidades_trend": {
       "main": [
         [
           {
-            "node": "Wait",
+            "node": "Remove Duplicates1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove Duplicates1": {
+      "main": [
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -1103,18 +1401,127 @@
         [],
         [
           {
-            "node": "Send a text message",
+            "node": "MensagemTelegram",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Wait": {
+    "MensagemTelegram": {
       "main": [
         [
           {
-            "node": "Loop Over Items",
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TriggerMensagem": {
+      "main": [
+        [
+          {
+            "node": "vw_oportunidades_trend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TriggerRaspagem": {
+      "main": [
+        [
+          {
+            "node": "Mercado libre",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Amazon Best Sellers",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gera Auth Shopee1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TriggerEmail_lista_prime": {
+      "main": [
+        [
+          {
+            "node": "Consulta dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook_site": {
+      "main": [
+        [
+          {
+            "node": "Consulta dados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gera Auth Shopee1": {
+      "main": [
+        [
+          {
+            "node": "Shopee Affiliate API1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Shopee Affiliate API1": {
+      "main": [
+        [
+          {
+            "node": "Process Shopee1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Shopee1": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Shopee1": {
+      "main": [
+        [
+          {
+            "node": "Create a row Shopee1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "Edit Shopee1",
             "type": "main",
             "index": 0
           }
@@ -1131,7 +1538,7 @@
     "timezone": "America/Sao_Paulo",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "3754197a-be58-4a70-9da4-2c221396c47a",
+  "versionId": "5713263a-3391-416e-91c2-61b02158d23c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e643c61781c93259041bbaff542c7a95926c7cf9887e347273fa29e70238fd32"
