@@ -53,8 +53,20 @@ async function loadData() {
     }
 
     const result = await response.json();
-    const data = result.data || [];
 
+    // NOVO: Proteção contra erro de servidor ou resposta vazia
+    if (!result || result.error) {
+      console.error(
+        "Erro reportado pela API:",
+        result?.error || "Resposta vazia",
+      );
+      showError(
+        `Erro ao carregar dados: ${result?.error || "Erro desconhecido"}`,
+      );
+      return;
+    }
+
+    const data = result.data || [];
     console.log(
       " Dados completos carregados via API:",
       data.length,
@@ -845,29 +857,21 @@ function setTodayFilter() {
 
 // Função para converter data dd/MM/yyyy para formato ISO (para scraped_at)
 function convertToISODate(dateString) {
-  if (!dateString || dateString.trim() === "") {
+  if (
+    !dateString ||
+    typeof dateString !== "string" ||
+    !dateString.includes("/")
+  ) {
     return null;
   }
 
-  // Remove espaços em branco
-  dateString = dateString.trim();
+  // Divide "26/04/2026" em [26, 04, 2026]
+  const parts = dateString.trim().split("/");
+  if (parts.length !== 3) return null;
 
-  // Verifica se está no formato dd/MM/yyyy
-  const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-  if (!dateRegex.test(dateString)) {
-    console.error("Formato de data inválido:", dateString);
-    return null;
-  }
+  const [day, month, year] = parts;
 
-  // Valida se a data é válida
-  const [day, month, year] = dateString.split("/");
-  const date = new Date(`${year}-${month}-${day}`);
-  if (isNaN(date.getTime())) {
-    console.error("Data inválida:", dateString);
-    return null;
-  }
-
-  // Retorna no formato ISO para scraped_at (YYYY-MM-DD)
+  // Retorna apenas "2026-04-26" (o backend cuidará do resto)
   return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
 }
 
@@ -920,6 +924,14 @@ async function applyFilters() {
     }
 
     const result = await response.json();
+
+    // NOVO: Proteção para não quebrar o dashboard se a busca falhar
+    if (!result || result.error) {
+      console.error("Erro nos filtros:", result?.error);
+      showError(result?.error || "Erro ao aplicar filtros");
+      return;
+    }
+
     const filteredData = result.data || [];
 
     console.log("Resposta da API:", result);

@@ -450,31 +450,24 @@ app.get("/api/analytics-full", async (req, res) => {
       }
     }
 
-    // Filtro de data - usando scraped_at
+    // --- FILTRO DE DATA (Melhorado para Timestamptz) ---
+
     if (date_from) {
-      if (date_from.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        const isoDateFrom = `${date_from}T00:00:00.000Z`;
-        query = query.gte("scraped_at", isoDateFrom);
-        console.log(`Filtro scraped_at >= ${isoDateFrom}`);
-      } else {
-        console.log(`Formato date_from inválido: ${date_from}`);
-        return res
-          .status(400)
-          .json({ error: "Formato date_from inválido. Use YYYY-MM-DD" });
-      }
+      // Se vier YYYY-MM-DD, forçamos o início do dia
+      const startTimestamp = date_from.includes("T")
+        ? date_from
+        : `${date_from}T00:00:00.000Z`;
+      query = query.gte("scraped_at", startTimestamp);
+      console.log(`Filtro Aplicado: scraped_at >= ${startTimestamp}`);
     }
 
     if (date_to) {
-      if (date_to.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        const isoDateTo = `${date_to}T23:59:59.999Z`;
-        query = query.lte("scraped_at", isoDateTo);
-        console.log(`Filtro scraped_at <= ${isoDateTo}`);
-      } else {
-        console.log(`Formato date_to inválido: ${date_to}`);
-        return res
-          .status(400)
-          .json({ error: "Formato date_to inválido. Use YYYY-MM-DD" });
-      }
+      // Se vier YYYY-MM-DD, forçamos o final do dia (23:59:59)
+      const endTimestamp = date_to.includes("T")
+        ? date_to
+        : `${date_to}T23:59:59.999Z`;
+      query = query.lte("scraped_at", endTimestamp);
+      console.log(`Filtro Aplicado: scraped_at <= ${endTimestamp}`);
     }
 
     // Debug: verificar se existem dados na tabela antes de aplicar filtros
