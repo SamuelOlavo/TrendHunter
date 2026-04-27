@@ -506,11 +506,22 @@ async function loadPodium() {
     // Separar produtos por plataforma
     const mlProducts = {};
     const amazonProducts = {};
+    const shopeeProducts = {};
 
     currentData.forEach((item) => {
       const productName = item.name;
-      const isML = item.platform.toLowerCase().includes("mercado");
-      const productMap = isML ? mlProducts : amazonProducts;
+      const platform = item.platform.toLowerCase();
+
+      let productMap;
+      if (platform.includes("mercado")) {
+        productMap = mlProducts;
+      } else if (platform.includes("amazon")) {
+        productMap = amazonProducts;
+      } else if (platform.includes("shopee")) {
+        productMap = shopeeProducts;
+      } else {
+        return; // Ignorar outras plataformas
+      }
 
       if (productMap[productName]) {
         productMap[productName].count++;
@@ -544,11 +555,18 @@ async function loadPodium() {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    // Para Shopee, ordenar por ranking_score (sales * rating_star)
+    const topShopee = Object.values(shopeeProducts)
+      .sort((a, b) => (b.ranking_score || 0) - (a.ranking_score || 0))
+      .slice(0, 5);
+
     console.log("Top 5 ML:", topML);
     console.log("Top 5 Amazon:", topAmazon);
+    console.log("Top 5 Shopee:", topShopee);
 
     displayPlatformPodium("ml", topML);
     displayPlatformPodium("amazon", topAmazon);
+    displayPlatformPodium("shopee", topShopee);
   } catch (error) {
     console.error("Erro ao carregar pódio:", error);
     document.getElementById("mlPodiumContainer").innerHTML = `
@@ -563,13 +581,23 @@ async function loadPodium() {
         <p class="text-sm">Erro ao carregar pódio Amazon</p>
       </div>
     `;
+    document.getElementById("shopeePodiumContainer").innerHTML = `
+      <div class="text-center text-red-400 py-6">
+        <i class="fas fa-exclamation-triangle text-xl mb-2"></i>
+        <p class="text-sm">Erro ao carregar pódio Shopee</p>
+      </div>
+    `;
   }
 }
 
 // Exibir pódio dos produtos por plataforma
 function displayPlatformPodium(platform, topProducts) {
   const containerId =
-    platform === "ml" ? "mlPodiumContainer" : "amazonPodiumContainer";
+    platform === "ml"
+      ? "mlPodiumContainer"
+      : platform === "amazon"
+        ? "amazonPodiumContainer"
+        : "shopeePodiumContainer";
   const container = document.getElementById(containerId);
 
   if (!topProducts || topProducts.length === 0) {
@@ -584,8 +612,14 @@ function displayPlatformPodium(platform, topProducts) {
 
   const positionClasses = ["gold", "silver", "bronze", "other", "other"];
   const positionIcons = ["🥇", "🥈", "🥉", "4️⃣", "5️⃣"];
-  const linkClass = platform === "ml" ? "ml-link" : "amazon-link";
-  const itemClass = platform === "ml" ? "ml" : "amazon";
+  const linkClass =
+    platform === "ml"
+      ? "ml-link"
+      : platform === "amazon"
+        ? "amazon-link"
+        : "shopee-link";
+  const itemClass =
+    platform === "ml" ? "ml" : platform === "amazon" ? "amazon" : "shopee";
 
   container.innerHTML = topProducts
     .map((product, index) => {

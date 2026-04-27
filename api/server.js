@@ -11,8 +11,9 @@ app.use(cors());
 app.use(express.json());
 
 // Configuração Supabase - apenas com variáveis de ambiente
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = "https://nnejmusqyekdczfphyvn.supabase.co";
+const supabaseKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5uZWptdXNxeWVrZGN6ZnBoeXZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2MDc5NDUsImV4cCI6MjA5MTE4Mzk0NX0.lTzzisBPD7RgGHx-xdo8fdo8Y5p1GKEHlHFu6-cE7L0";
 
 // Validar variáveis de ambiente essenciais
 if (!supabaseUrl || !supabaseKey) {
@@ -255,40 +256,70 @@ app.get("/api/stats", async (req, res) => {
   try {
     console.log("Buscando estatísticas...");
 
-    // Buscar dados básicos via REST API
-    const response = await fetch(
-      `${supabaseUrl}/rest/v1/products_trend?select=*`,
-      {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-        },
-      },
-    );
+    let allData = [];
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    // Buscar dados de products_trend (Amazon, Mercado Livre, etc.)
+    const { data: productsData, error: productsError } = await supabase
+      .from("products_trend")
+      .select("*");
+
+    if (productsError) {
+      console.error("Erro ao buscar products_trend:", productsError);
+    } else {
+      console.log(
+        `Encontrados ${productsData.length} produtos em products_trend`,
+      );
+      allData = allData.concat(productsData);
     }
 
-    const data = await response.json();
-    console.log(`Encontrados ${data.length} produtos`);
+    // Buscar dados da Shopee
+    const { data: shopeeData, error: shopeeError } = await supabase
+      .from("shopee_trend")
+      .select("*");
+
+    if (shopeeError) {
+      console.error("Erro ao buscar shopee_trend:", shopeeError);
+    } else {
+      console.log(`Encontrados ${shopeeData.length} produtos na Shopee`);
+      // Converter dados da Shopee para formato compatível
+      const shopeeFormatted = shopeeData.map((item) => ({
+        id: item.id,
+        platform: "Shopee",
+        name: item.name,
+        category: item.category,
+        ranking: null,
+        price_current: item.price,
+        image_url: item.image_url,
+        url: item.url_product,
+        scraped_at: item.scraped_at,
+        data: item.data,
+        sales: item.sales,
+        rating_star: item.rating_star,
+        commission: item.commission,
+      }));
+      allData = allData.concat(shopeeFormatted);
+    }
+
+    console.log(`Total de produtos: ${allData.length}`);
 
     // Calcular estatísticas localmente
-    const platforms = [...new Set(data.map((item) => item.platform))];
-    const categories = [...new Set(data.map((item) => item.category))];
+    const platforms = [...new Set(allData.map((item) => item.platform))];
+    const categories = [...new Set(allData.map((item) => item.category))];
     const avgPrice =
-      data.reduce((sum, item) => sum + parseFloat(item.price_current || 0), 0) /
-      data.length;
+      allData.reduce(
+        (sum, item) => sum + parseFloat(item.price_current || 0),
+        0,
+      ) / allData.length;
 
     // Distribuição por platform
     const platformDist = {};
-    data.forEach((item) => {
+    allData.forEach((item) => {
       platformDist[item.platform] = (platformDist[item.platform] || 0) + 1;
     });
 
     // Top categorias
     const categoryCounts = {};
-    data.forEach((item) => {
+    allData.forEach((item) => {
       categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
     });
     const topCategories = Object.entries(categoryCounts)
@@ -296,8 +327,25 @@ app.get("/api/stats", async (req, res) => {
       .slice(0, 10)
       .map(([category, count]) => ({ category, count }));
 
+    // Estatísticas específicas da Shopee
+    const shopeeStats = shopeeData
+      ? {
+          total_products: shopeeData.length,
+          avg_rating:
+            shopeeData.reduce((sum, item) => sum + (item.rating_star || 0), 0) /
+            shopeeData.length,
+          total_sales: shopeeData.reduce(
+            (sum, item) => sum + (item.sales || 0),
+            0,
+          ),
+          avg_commission:
+            shopeeData.reduce((sum, item) => sum + (item.commission || 0), 0) /
+            shopeeData.length,
+        }
+      : null;
+
     res.json({
-      total_products: [{ count: data.length }],
+      total_products: [{ count: allData.length }],
       avg_price: [{ avg: avgPrice }],
       platforms: platforms.map((p) => ({ platform: p })),
       categories: categories.map((c) => ({ category: c })),
@@ -305,11 +353,12 @@ app.get("/api/stats", async (req, res) => {
       platform_distribution: Object.entries(platformDist).map(
         ([platform, count]) => ({ platform, count }),
       ),
-      price_trends: data.slice(0, 10).map((item) => ({
+      price_trends: allData.slice(0, 10).map((item) => ({
         data: item.data,
         avg_price: parseFloat(item.price_current || 0),
         platform: item.platform,
       })),
+      shopee_stats: shopeeStats,
     });
   } catch (error) {
     console.error("Erro Stats:", error);
@@ -324,26 +373,79 @@ app.get("/api/categories", async (req, res) => {
 
     console.log("Buscando categorias com filtro:", platform);
 
-    // Construir query REST API para categorias distintas
-    let restQuery = "select=category";
+    let allCategories = [];
 
-    if (platform) {
-      restQuery += `&platform=eq.${encodeURIComponent(platform)}`;
+    if (!platform || platform === "all") {
+      // Buscar categorias de products_trend
+      const { data: productsData, error: productsError } = await supabase
+        .from("products_trend")
+        .select("category")
+        .not("category", "is", null);
+
+      if (productsError) {
+        console.error(
+          "Erro ao buscar categorias de products_trend:",
+          productsError,
+        );
+      } else {
+        allCategories = allCategories.concat(
+          productsData.map((item) => item.category),
+        );
+      }
+
+      // Buscar categorias da Shopee
+      const { data: shopeeData, error: shopeeError } = await supabase
+        .from("shopee_trend")
+        .select("category")
+        .not("category", "is", null);
+
+      if (shopeeError) {
+        console.error("Erro ao buscar categorias da Shopee:", shopeeError);
+      } else {
+        allCategories = allCategories.concat(
+          shopeeData.map((item) => item.category),
+        );
+      }
+    } else if (platform === "Shopee") {
+      // Buscar apenas categorias da Shopee
+      const { data, error } = await supabase
+        .from("shopee_trend")
+        .select("category")
+        .not("category", "is", null);
+
+      if (error) {
+        console.error("Erro ao buscar categorias da Shopee:", error);
+        return res.status(500).json({ error: error.message });
+      }
+
+      allCategories = data.map((item) => item.category);
+    } else {
+      // Buscar categorias de uma plataforma específica
+      const { data, error } = await supabase
+        .from("products_trend")
+        .select("category")
+        .eq("platform", platform)
+        .not("category", "is", null);
+
+      if (error) {
+        console.error("Erro ao buscar categorias:", error);
+        return res.status(500).json({ error: error.message });
+      }
+
+      allCategories = data.map((item) => item.category);
     }
 
-    // Buscar categorias via Supabase
-    const { data, error } = await supabase
-      .from("products_trend")
-      .select("category")
-      .not("category", "is", null);
+    // Extrair categorias únicas e contar produtos
+    const categoryCounts = {};
+    allCategories.forEach((category) => {
+      if (category) {
+        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+      }
+    });
 
-    if (error) {
-      console.error("Erro ao buscar categorias:", error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    // Extrair categorias únicas
-    const categories = [...new Set(data.map((item) => item.category))];
+    const categories = Object.entries(categoryCounts)
+      .map(([category, count]) => ({ category, product_count: count }))
+      .sort((a, b) => b.product_count - a.product_count);
 
     console.log("Categorias encontradas:", categories.length);
 
@@ -382,6 +484,173 @@ app.get("/api/opportunities", async (req, res) => {
   }
 });
 
+// Endpoint específico para dados da Shopee
+app.get("/api/shopee", async (req, res) => {
+  try {
+    console.log("=== INÍCIO /api/shopee ===");
+
+    const { category, limit = 50, min_sales = 10 } = req.query;
+
+    console.log("Buscando dados da Shopee com filtros:", {
+      category,
+      limit,
+      min_sales,
+    });
+
+    let query = supabase
+      .from("shopee_trend")
+      .select("*")
+      .gte("sales", min_sales);
+
+    if (category && category !== "all") {
+      query = query.eq("category", category);
+    }
+
+    query = query.order("sales", { ascending: false }).limit(limit);
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Erro ao buscar dados da Shopee:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Calcular score de ranking (sales * rating_star)
+    const shopeeData = data
+      .map((item) => ({
+        ...item,
+        ranking_score: (item.sales || 0) * (item.rating_star || 0),
+        platform: "Shopee",
+      }))
+      .sort((a, b) => b.ranking_score - a.ranking_score);
+
+    console.log("Dados da Shopee encontrados:", shopeeData.length);
+
+    res.json({
+      data: shopeeData,
+      count: shopeeData.length,
+      message: "Dados da Shopee com ranking baseado em sales × rating_star",
+    });
+  } catch (error) {
+    console.error("Erro interno ao buscar dados da Shopee:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para analytics da Shopee
+app.get("/api/shopee-analytics", async (req, res) => {
+  try {
+    console.log("Buscando analytics da Shopee...");
+
+    const { category, date_from, date_to } = req.query;
+
+    let query = supabase.from("shopee_trend").select("*");
+
+    if (category && category !== "all") {
+      query = query.eq("category", category);
+    }
+
+    if (date_from) {
+      query = query.gte("scraped_at", `${date_from}T00:00:00.000Z`);
+    }
+
+    if (date_to) {
+      query = query.lte("scraped_at", `${date_to}T23:59:59.999Z`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Erro ao buscar analytics da Shopee:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Calcular estatísticas específicas da Shopee
+    const totalProducts = data.length;
+    const avgRating =
+      data.reduce((sum, item) => sum + (item.rating_star || 0), 0) /
+      totalProducts;
+    const totalSales = data.reduce((sum, item) => sum + (item.sales || 0), 0);
+    const avgPrice =
+      data.reduce((sum, item) => sum + (item.price || 0), 0) / totalProducts;
+
+    // Top categorias por vendas
+    const categorySales = {};
+    data.forEach((item) => {
+      if (item.category) {
+        categorySales[item.category] =
+          (categorySales[item.category] || 0) + (item.sales || 0);
+      }
+    });
+
+    const topCategoriesBySales = Object.entries(categorySales)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([category, sales]) => ({ category, total_sales: sales }));
+
+    // Top produtos por score
+    const topProducts = data
+      .map((item) => ({
+        ...item,
+        ranking_score: (item.sales || 0) * (item.rating_star || 0),
+      }))
+      .sort((a, b) => b.ranking_score - a.ranking_score)
+      .slice(0, 20);
+
+    res.json({
+      data: data,
+      stats: {
+        total_products: totalProducts,
+        avg_rating: avgRating.toFixed(2),
+        total_sales: totalSales,
+        avg_price: avgPrice.toFixed(2),
+        top_categories_by_sales: topCategoriesBySales,
+      },
+      top_products: topProducts,
+    });
+  } catch (error) {
+    console.error("Erro interno no analytics da Shopee:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Endpoint para categorias da Shopee
+app.get("/api/shopee-categories", async (req, res) => {
+  try {
+    console.log("Buscando categorias da Shopee...");
+
+    const { data, error } = await supabase
+      .from("shopee_trend")
+      .select("category")
+      .not("category", "is", null);
+
+    if (error) {
+      console.error("Erro ao buscar categorias da Shopee:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    // Extrair categorias únicas e contar produtos
+    const categoryCounts = {};
+    data.forEach((item) => {
+      if (item.category) {
+        categoryCounts[item.category] =
+          (categoryCounts[item.category] || 0) + 1;
+      }
+    });
+
+    const categories = Object.entries(categoryCounts)
+      .map(([category, count]) => ({ category, product_count: count }))
+      .sort((a, b) => b.product_count - a.product_count);
+
+    console.log("Categorias da Shopee encontradas:", categories.length);
+
+    res.json({ categories });
+  } catch (error) {
+    console.error("Erro interno ao buscar categorias da Shopee:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Endpoint para analytics completo - usando SDK do Supabase
 app.get("/api/analytics-full", async (req, res) => {
   try {
@@ -407,34 +676,108 @@ app.get("/api/analytics-full", async (req, res) => {
       process.env.SUPABASE_ANON_KEY ? "Configurada" : "NÃO CONFIGURADA",
     );
 
-    let query = supabase.from("products_trend").select("*");
+    let allData = [];
 
-    // Filtros
-    if (platform && platform !== "all") {
+    // Se platform for "all" ou não especificado, buscar dados de todas as plataformas
+    if (!platform || platform === "all") {
+      console.log("Buscando dados de todas as plataformas...");
+
+      // Buscar dados da products_trend (Amazon, Mercado Livre, etc.)
+      const { data: productsData, error: productsError } = await supabase
+        .from("products_trend")
+        .select("*");
+
+      if (productsError) {
+        console.error("Erro ao buscar products_trend:", productsError);
+      } else {
+        console.log(
+          `Encontrados ${productsData.length} produtos em products_trend`,
+        );
+        allData = allData.concat(productsData);
+      }
+
+      // Buscar dados da Shopee
+      const { data: shopeeData, error: shopeeError } = await supabase
+        .from("shopee_trend")
+        .select("*");
+
+      if (shopeeError) {
+        console.error("Erro ao buscar shopee_trend:", shopeeError);
+      } else {
+        console.log(`Encontrados ${shopeeData.length} produtos na Shopee`);
+        // Converter dados da Shopee para formato compatível
+        const shopeeFormatted = shopeeData.map((item) => ({
+          id: item.id,
+          platform: "Shopee",
+          name: item.name,
+          category: item.category,
+          ranking: null, // Shopee não tem ranking direto, será calculado
+          price_current: item.price,
+          image_url: item.image_url,
+          url: item.url_product,
+          scraped_at: item.scraped_at,
+          data: item.data,
+          sales: item.sales,
+          rating_star: item.rating_star,
+          commission: item.commission,
+          ranking_score: (item.sales || 0) * (item.rating_star || 0),
+        }));
+        allData = allData.concat(shopeeFormatted);
+      }
+    } else if (platform === "Shopee") {
+      // Buscar apenas dados da Shopee
+      const { data: shopeeData, error: shopeeError } = await supabase
+        .from("shopee_trend")
+        .select("*");
+
+      if (shopeeError) {
+        console.error("Erro ao buscar shopee_trend:", shopeeError);
+        return res.status(500).json({ error: shopeeError.message });
+      }
+
+      const shopeeFormatted = shopeeData.map((item) => ({
+        id: item.id,
+        platform: "Shopee",
+        name: item.name,
+        category: item.category,
+        ranking: null,
+        price_current: item.price,
+        image_url: item.image_url,
+        url: item.url_product,
+        scraped_at: item.scraped_at,
+        data: item.data,
+        sales: item.sales,
+        rating_star: item.rating_star,
+        commission: item.commission,
+        ranking_score: (item.sales || 0) * (item.rating_star || 0),
+      }));
+
+      allData = shopeeFormatted;
+    } else {
+      // Buscar apenas de uma plataforma específica (Amazon, Mercado Livre, etc.)
+      let query = supabase.from("products_trend").select("*");
       query = query.eq("platform", platform);
-      console.log(`Aplicando filtro platform: ${platform}`);
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Erro ao buscar dados da plataforma:", error);
+        return res.status(500).json({ error: error.message });
+      }
+
+      allData = data;
     }
 
+    // Aplicar filtros de categoria
     if (category && category !== "all") {
       if (category === "top10") {
-        // Para top10, buscar as 10 categorias mais frequentes
-        console.log("Buscando top10 categorias...");
-        const { data: categories, error: catError } = await supabase
-          .from("products_trend")
-          .select("category")
-          .not("category", "is", null);
-
-        if (catError) {
-          console.error("Erro ao buscar categorias:", catError);
-          return res
-            .status(500)
-            .json({ error: "Erro ao buscar categorias: " + catError.message });
-        }
-
+        // Buscar top 10 categorias
         const categoryCounts = {};
-        categories.forEach((item) => {
-          categoryCounts[item.category] =
-            (categoryCounts[item.category] || 0) + 1;
+        allData.forEach((item) => {
+          if (item.category) {
+            categoryCounts[item.category] =
+              (categoryCounts[item.category] || 0) + 1;
+          }
         });
 
         const topCategories = Object.entries(categoryCounts)
@@ -442,77 +785,37 @@ app.get("/api/analytics-full", async (req, res) => {
           .slice(0, 10)
           .map(([cat]) => cat);
 
-        query = query.in("category", topCategories);
-        console.log("Top10 categorias:", topCategories);
+        allData = allData.filter((item) =>
+          topCategories.includes(item.category),
+        );
+        console.log("Top10 categorias aplicadas:", topCategories);
       } else {
-        query = query.eq("category", category);
-        console.log(`Aplicando filtro category: ${category}`);
+        allData = allData.filter((item) => item.category === category);
+        console.log(`Filtro category aplicado: ${category}`);
       }
     }
 
-    // --- FILTRO DE DATA (Melhorado para Timestamptz) ---
-
+    // Aplicar filtros de data
     if (date_from) {
-      // Se vier YYYY-MM-DD, forçamos o início do dia
       const startTimestamp = date_from.includes("T")
         ? date_from
         : `${date_from}T00:00:00.000Z`;
-      query = query.gte("scraped_at", startTimestamp);
-      console.log(`Filtro Aplicado: scraped_at >= ${startTimestamp}`);
+      allData = allData.filter((item) => item.scraped_at >= startTimestamp);
     }
 
     if (date_to) {
-      // Se vier YYYY-MM-DD, forçamos o final do dia (23:59:59)
       const endTimestamp = date_to.includes("T")
         ? date_to
         : `${date_to}T23:59:59.999Z`;
-      query = query.lte("scraped_at", endTimestamp);
-      console.log(`Filtro Aplicado: scraped_at <= ${endTimestamp}`);
+      allData = allData.filter((item) => item.scraped_at <= endTimestamp);
     }
 
-    // Debug: verificar se existem dados na tabela antes de aplicar filtros
-    console.log("=== DEBUG: Verificando dados na tabela ===");
-    const { data: allData, error: allError } = await supabase
-      .from("products_trend")
-      .select("scraped_at, platform, data")
-      .limit(5);
-
-    if (allError) {
-      console.error("Erro ao buscar dados de debug:", allError);
-    } else {
-      console.log("Primeiros 5 registros na tabela:");
-      allData.forEach((item, index) => {
-        console.log(
-          `  ${index + 1}. scraped_at: ${item.scraped_at}, platform: ${item.platform}, data: ${item.data}`,
-        );
-      });
-    }
-
-    console.log("Executando query com SDK do Supabase...");
-
-    const { data, error, count } = await query;
-
-    if (error) {
-      console.error("Erro ao buscar analytics completos:", error);
-      console.error("Detalhes do erro:", {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-      });
-      return res.status(500).json({
-        error: error.message,
-        details: error.details,
-        code: error.code,
-      });
-    }
-
-    console.log("Dados completos carregados:", data?.length || 0, "produtos");
+    console.log("Dados finais após filtros:", allData.length, "produtos");
 
     // Debug: mostrar algumas datas dos resultados
-    if (data && data.length > 0) {
+    if (allData && allData.length > 0) {
       console.log("Primeiras 3 datas encontradas:");
-      data.slice(0, 3).forEach((item) => {
+      allData.slice(0, 3).forEach((item) => {
         console.log(`  - ${item.scraped_at} (${item.platform}) - ${item.data}`);
       });
     } else {
@@ -520,9 +823,9 @@ app.get("/api/analytics-full", async (req, res) => {
     }
 
     const response = {
-      data: data || [],
-      count: data?.length || 0,
-      total: count || 0,
+      data: allData,
+      count: allData.length,
+      total: allData.length,
     };
 
     console.log("Resposta enviada:", response);

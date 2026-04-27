@@ -57,6 +57,11 @@
     color: #fff;
 }
 
+.shopee-badge {
+    background: #ee4d2d;
+    color: #fff;
+}
+
 /* Estilos responsivos */
 @media (max-width: 768px) {
     .chart-container {
