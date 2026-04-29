@@ -319,17 +319,27 @@ function updateRankingChart(data) {
       "#e17055",
     ];
 
-    // Ordenar por data
+    // Ordenar por data - melhorar parsing para formato dd/MM/yyyy
     const sortedData = product.dates
-      .map((date, i) => ({
-        x: date,
-        y: product.rankings[i],
-      }))
-      .sort(
-        (a, b) =>
-          new Date(a.x.split("/").reverse().join("-")) -
-          new Date(b.x.split("/").reverse().join("-")),
-      );
+      .map((date, i) => {
+        // Tentar fazer parse da data no formato dd/MM/yyyy
+        const dateParts = date.split("/");
+        if (dateParts.length === 3) {
+          const [day, month, year] = dateParts;
+          const dateObj = new Date(`${year}-${month}-${day}`);
+          return {
+            x: date,
+            y: product.rankings[i],
+            dateObj: dateObj, // Para ordenação correta
+          };
+        }
+        return {
+          x: date,
+          y: product.rankings[i],
+          dateObj: new Date(0), // Data inválida para fallback
+        };
+      })
+      .sort((a, b) => a.dateObj - b.dateObj);
 
     return {
       label:
@@ -738,7 +748,7 @@ function updateTable(data) {
     row.className = "hover:bg-[#2a2a2a] transition-colors";
     row.innerHTML = `
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                <span class="platform-badge ${item.platform.toLowerCase().includes("mercado") ? "ml-badge" : "amazon-badge"}">
+                <span class="platform-badge ${item.platform.toLowerCase().includes("mercado") ? "ml-badge" : item.platform.toLowerCase().includes("amazon") ? "amazon-badge" : "shopee-badge"}">
                     ${item.platform}
                 </span>
             </td>
@@ -758,7 +768,7 @@ function updateTable(data) {
                 ${item.data}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                <a href="${item.url}" target="_blank" 
+                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
                    class="text-[#d4ff3f] hover:text-white transition">
                     <i class="fas fa-external-link-alt"></i>
                 </a>
@@ -868,7 +878,10 @@ function updateChartsWithFilters() {
     );
   } else if (currentChartFilters.platform === "amazon") {
     filteredData = filteredData.filter((item) => item.platform === "Amazon");
+  } else if (currentChartFilters.platform === "shopee") {
+    filteredData = filteredData.filter((item) => item.platform === "Shopee");
   }
+  // Se for "all", não filtra (mostra todos os dados)
 
   // Atualizar gráficos
   updatePlatformChart(filteredData);
