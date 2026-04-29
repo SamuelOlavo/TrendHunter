@@ -327,18 +327,19 @@ function updateRankingChart(data) {
         if (dateParts.length === 3) {
           const [day, month, year] = dateParts;
           const dateObj = new Date(`${year}-${month}-${day}`);
-          return {
-            x: date,
-            y: product.rankings[i],
-            dateObj: dateObj, // Para ordenação correta
-          };
+          // Verificar se a data é válida
+          if (!isNaN(dateObj.getTime())) {
+            return {
+              x: date,
+              y: product.rankings[i],
+              dateObj: dateObj, // Para ordenação correta
+            };
+          }
         }
-        return {
-          x: date,
-          y: product.rankings[i],
-          dateObj: new Date(0), // Data inválida para fallback
-        };
+        // Se a data for inválida, não incluir no dataset
+        return null;
       })
+      .filter((item) => item !== null) // Remover datas inválidas
       .sort((a, b) => a.dateObj - b.dateObj);
 
     return {
@@ -952,8 +953,8 @@ async function applyFilters() {
     const params = new URLSearchParams();
     if (platform) params.append("platform", platform);
     if (category) params.append("category", category);
-    if (isoDateFrom) params.append("date_from", isoDateFrom);
-    if (isoDateTo) params.append("date_to", isoDateTo);
+    if (isoDateFrom) params.append("dateFrom", isoDateFrom);
+    if (isoDateTo) params.append("dateTo", isoDateTo);
 
     const fullUrl = `${API_BASE_URL}/api/analytics-full?${params}`;
     console.log("URL completa:", fullUrl);
