@@ -7,26 +7,7 @@
     <title>Trend Hunter</title>
     <link rel="icon" type="image/svg+xml"
         href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d4ff3f'/%3E%3Cstop offset='100%25' style='stop-color:%23b8e600'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23grad)'/%3E%3Cg transform='translate(6,6)'%3E%3Crect x='2' y='2' width='16' height='16' rx='3' fill='%23000' opacity='0.9'/%3E%3Crect x='4' y='6' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='9' width='12' height='1.5' fill='%23d4ff3f'/%3E%3Crect x='4' y='12' width='9' height='1.5' fill='%23d4ff3f'/%3E%3Cpath d='M13 13l2.5-2.5 2.5 2.5-2.5 2.5-2.5-2.5z' fill='%23d4ff3f'/%3E%3C/g%3E%3C/svg%3E">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'trend-green': '#d4ff3f',
-                        'trend-green-dark': '#b8e600',
-                        'ml-yellow': '#ffe600',
-                        'amazon-orange': '#ff9900',
-                        'amazon-orange-dark': '#ff9500',
-                        'shopee-red': '#ee4d2d',
-                        'dark-bg': '#0f0f0f',
-                        'dark-card': '#1a1a1a',
-                        'dark-footer': '#121212',
-                    }
-                }
-            }
-        }
-    </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="./output.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
@@ -86,13 +67,21 @@
             </div>
             <h1 class="text-5xl font-bold mb-4">Acesso <span class="text-[#d4ff3f]">Completo</span> aos Maiores
                 Marketplaces</h1>
-            <p class="text-gray-400 text-lg max-w-3xl mx-auto">
-                Monitore <strong>simultaneamente</strong> o Mercado Livre e Amazon, compare preços em tempo real e
+            <p class="text-gray-400 text-lg  max-w-3xl mx-auto">
+                Monitore <strong>simultaneamente</strong> o Mercado Livre, Amazon e Shoppe compare preços em tempo real
+                e
                 descubra oportunidades que seus concorrentes ainda não viram. Dados atualizados diariamente.
             </p>
 
             <!-- Marketplace Badges -->
             <div class="flex justify-center items-center gap-6 mt-8">
+                <div class="bg-[#1a1a1a] border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3">
+                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-black font-bold text-xs">AMZ</span>
+                    </div>
+                    <span class="text-white font-medium">Amazon</span>
+                </div>
+                <div class="text-[#d4ff3f] text-2xl font-bold">+</div>
                 <div class="bg-[#1a1a1a] border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3">
                     <div class="w-8 h-8 bg-[#ffe600] rounded-lg flex items-center justify-center">
                         <span class="text-black font-bold text-xs">ML</span>
@@ -101,10 +90,10 @@
                 </div>
                 <div class="text-[#d4ff3f] text-2xl font-bold">+</div>
                 <div class="bg-[#1a1a1a] border border-white/10 px-6 py-3 rounded-xl flex items-center gap-3">
-                    <div class="w-8 h-8 bg-[#ff9500] rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-xs">AMZ</span>
+                    <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                        <span class="text-orange-400 font-bold text-xs">SHE</span>
                     </div>
-                    <span class="text-white font-medium">Amazon</span>
+                    <span class="text-white font-medium">Shopee</span>
                 </div>
             </div>
         </div>
@@ -130,7 +119,7 @@
                     <div>
                         <h3 class="font-bold text-lg mb-1">Lista Multi-Source por Email</h3>
                         <p class="text-gray-400">Receba todos os dias, direto no seu email, os produtos com maior volume
-                            de vendas no Mercado Livre e Amazon</p>
+                            de vendas no Mercado Livre, Amazon e Shopee</p>
                     </div>
                 </div>
 
@@ -151,8 +140,8 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-lg mb-1">Filtros Multi-Source</h3>
-                        <p class="text-gray-400">Filtre produtos por marketplace, categoria, compare preços entre ML e
-                            Amazon, e muito mais.</p>
+                        <p class="text-gray-400">Filtre produtos por marketplace, categoria, compare preços entre ML,
+                            Amazon e Shopee e muito mais.</p>
                     </div>
                 </div>
 
@@ -184,7 +173,7 @@
                 <h3 class="text-xl font-bold mb-4 text-center">Fale Conosco pelo WhatsApp</h3>
                 <p class="text-gray-400 text-center mb-6">
                     Tenha acesso imediato aos dados multi-source. Fale diretamente com nosso time e
-                    comece a monitorar Mercado Livre e Amazon hoje mesmo!
+                    comece a monitorar Mercado Livre, Amazon e Shopee hoje mesmo!
                 </p>
 
                 <a href="https://wa.me/5531993101769?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Plano%20Prime%20do%20Trend%20Hunter%21"
@@ -232,7 +221,8 @@
                 <div class="border-b border-white/10 pb-4">
                     <h3 class="font-bold mb-2">Como funciona a lista diária?</h3>
                     <p class="text-gray-400 text-sm">Todos os dias você recebe um email com os produtos que estão em
-                        alta no Mercado Livre e na Amazon, incluindo preço, ranking de vendas com sua categoria.</p>
+                        alta no Mercado Livre, Amazon e Shopee, incluindo preço, ranking de vendas.
+                    </p>
                 </div>
 
                 <!-- <div class="border-b border-white/10 pb-4">
@@ -243,7 +233,8 @@
 
                 <div class="border-b border-white/10 pb-4">
                     <h3 class="font-bold mb-2">Os dados são atualizados?</h3>
-                    <p class="text-gray-400 text-sm">Sim! Nossos sistemas monitoram o Mercado Livre 24/7 para garantir
+                    <p class="text-gray-400 text-sm">Sim! Nossos sistemas monitoram as plataformas (Mercado Livre,
+                        Amazon e Shopee) 24/7 para garantir
                         que você sempre tenha as informações mais atualizadas.</p>
                 </div>
 
