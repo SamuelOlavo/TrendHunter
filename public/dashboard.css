@@ -77,6 +77,26 @@
     }
 }
 
+/* Prevenir overflow horizontal */
+* {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Ajuste para containers principais */
+.max-w-7xl {
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .max-w-7xl {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
 /* Animações e transições */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
